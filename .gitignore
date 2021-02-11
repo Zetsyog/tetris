@@ -44,4 +44,4 @@ build
 *.app
 
 # Code editor
-.vs-code/
+.vscode/

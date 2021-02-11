@@ -14,6 +14,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set (SOURCES src/main.cpp
           src/App.cpp
           src/gui/Screen.cpp
+          src/util/FPSCounter.cpp
           )
 
 find_package(SDL2 REQUIRED)

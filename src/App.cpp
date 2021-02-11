@@ -1,12 +1,13 @@
 #include "App.hpp"
+#include <iostream>
 
 namespace {
 const int SCREEN_WIDTH	= 800;
 const int SCREEN_HEIGHT = 600;
-const char *TITLE		= "TETRIS";
-} // namespace
+const char *TITLE		= "Tetris";
+}
 
-App::App(): currentScreen(nullptr), quit(false) {
+App::App() : currentScreen(nullptr), quit(false), fps(1.0) {
 }
 
 int App::start() {
@@ -70,21 +71,23 @@ void App::loop() {
 		// quit |= (state[SDL_SCANCODE_ESCAPE] != 0);
 		pollEvents();
 
-		prev = now;
-		now	 = SDL_GetPerformanceCounter();
-		delta =
-			(double)((now - prev) / (double)SDL_GetPerformanceFrequency());
+		prev  = now;
+		now	  = SDL_GetPerformanceCounter();
+		delta = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
+
 
 		SDL_SetRenderDrawColor(renderer, 96, 128, 255, 255);
-	    SDL_RenderClear(renderer);
+		SDL_RenderClear(renderer);
 
-        if(currentScreen != nullptr) {
-            currentScreen->update(delta);
-            currentScreen->render(renderer);
-        }
+		if (currentScreen != nullptr) {
+			currentScreen->update(delta);
+			currentScreen->render(renderer);
+		}
 
-        SDL_RenderPresent(renderer);
-        SDL_Delay(64);
+		SDL_RenderPresent(renderer);
+
+		fps.update();
+		SDL_Delay(16);
 	}
 }
 
