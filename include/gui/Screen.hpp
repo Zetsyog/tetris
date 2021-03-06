@@ -12,10 +12,10 @@ class Screen {
   public:
 	Screen();
 	virtual ~Screen();
-	virtual void init(Renderer &renderer) = 0;
+	virtual void init(Renderer &renderer);
 	virtual void render(double delta, Renderer &renderer);
 	virtual void resize(int width, int height);
-	virtual void dispose() = 0;
+	virtual void dispose();
 
 	void add(Drawable *child);
 };
@@ -26,7 +26,6 @@ class MainScreen : public Screen {
 	virtual ~MainScreen();
 	virtual void init(Renderer &renderer);
 	virtual void render(double delta, Renderer &renderer);
-	virtual void resize(int width, int height);
 	virtual void dispose();
 
   private:

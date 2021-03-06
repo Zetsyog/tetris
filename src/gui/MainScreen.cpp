@@ -17,8 +17,5 @@ void MainScreen::render(double delta, Renderer &renderer) {
     renderer.draw(test, 10, 100);
 }
 
-void MainScreen::resize(int width, int height) {
-}
-
 void MainScreen::dispose() {
 }
