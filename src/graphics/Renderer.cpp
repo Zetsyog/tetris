@@ -25,7 +25,7 @@ void Renderer::draw(Texture *texture, int x, int y) {
 }
 
 void Renderer::clear() {
-    SDL_SetRenderDrawColor(gRenderer, 96, 128, 255, 255);
+    SDL_SetRenderDrawColor(gRenderer, 0, 0, 0, 0);
 	SDL_RenderClear(gRenderer);
 }
 

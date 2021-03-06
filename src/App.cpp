@@ -79,8 +79,7 @@ void App::loop() {
 		renderer->clear();
 
 		if (currentScreen != nullptr) {
-			currentScreen->update(delta);
-			currentScreen->render(*renderer);
+			currentScreen->render(delta, *renderer);
 		}
 
 		renderer->render();

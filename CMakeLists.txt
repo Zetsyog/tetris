@@ -13,9 +13,11 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (SOURCES src/main.cpp
           src/App.cpp
+          src/gui/Screen.cpp
           src/gui/MainScreen.cpp
           src/util/FPSCounter.cpp
           src/graphics/Renderer.cpp
+          src/graphics/Drawable.cpp
           src/graphics/Texture.cpp
           )
 
