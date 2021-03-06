@@ -1,26 +1,25 @@
 #include "App.hpp"
+#include <SDL2/SDL_image.h>
 #include <iostream>
 
 namespace {
 const int SCREEN_WIDTH	= 800;
 const int SCREEN_HEIGHT = 600;
 const char *TITLE		= "Tetris";
-}
+} // namespace
 
 App::App() : currentScreen(nullptr), quit(false), fps(1.0) {
 }
 
 int App::start() {
-	init();
 	loop();
 	dispose();
 	return 0;
 }
 
 void App::init() {
-	int rendererFlags, windowFlags;
-	rendererFlags = SDL_RENDERER_ACCELERATED;
-	windowFlags	  = 0;
+	int windowFlags;
+	windowFlags = 0;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
@@ -39,11 +38,13 @@ void App::init() {
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
 
-	renderer = SDL_CreateRenderer(window, -1, rendererFlags);
+	renderer = new Renderer(window);
 
-	if (!renderer) {
-		printf("Failed to create renderer: %s\n", SDL_GetError());
-		exit(1);
+	int imgFlags = IMG_INIT_PNG;
+	if (!(IMG_Init(imgFlags) & imgFlags)) {
+		printf("SDL_image could not initialize! SDL_image Error: %s\n",
+			   IMG_GetError());
+		exit(EXIT_FAILURE);
 	}
 }
 
@@ -75,24 +76,31 @@ void App::loop() {
 		now	  = SDL_GetPerformanceCounter();
 		delta = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
 
-
-		SDL_SetRenderDrawColor(renderer, 96, 128, 255, 255);
-		SDL_RenderClear(renderer);
+		renderer->clear();
 
 		if (currentScreen != nullptr) {
 			currentScreen->update(delta);
-			currentScreen->render(renderer);
+			currentScreen->render(*renderer);
 		}
 
-		SDL_RenderPresent(renderer);
+		renderer->render();
 
 		fps.update();
 		SDL_Delay(16);
 	}
 }
 
+void App::setCurrentScreen(Screen *screen) {
+	if(currentScreen != nullptr) {
+		currentScreen->dispose();
+		delete currentScreen;
+	}
+	screen->init(*renderer);
+	currentScreen = screen;
+}
+
 void App::dispose() {
-	SDL_DestroyRenderer(renderer);
+	renderer->dispose();
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }

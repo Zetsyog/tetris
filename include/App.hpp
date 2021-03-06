@@ -4,24 +4,26 @@
 #include <SDL2/SDL.h>
 #include "gui/Screen.hpp"
 #include "util/FPSCounter.hpp"
+#include "graphics/Renderer.hpp"
 
 class App {
   private:
 	Screen *currentScreen;
-	SDL_Renderer *renderer;
+	Renderer *renderer;
 	SDL_Window *window;
 	bool quit;
 	FPSCounter fps;
 
   private:
-	void init();
 	void loop();
 	void pollEvents();
 	void dispose();
 
   public:
 	App();
+	void init();
 	int start();
+	void setCurrentScreen(Screen *screen);
 };
 
 #endif

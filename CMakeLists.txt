@@ -13,9 +13,13 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (SOURCES src/main.cpp
           src/App.cpp
-          src/gui/Screen.cpp
+          src/gui/MainScreen.cpp
           src/util/FPSCounter.cpp
+          src/graphics/Renderer.cpp
+          src/graphics/Texture.cpp
           )
+
+file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})
 
 find_package(SDL2 REQUIRED)
 
@@ -24,10 +28,10 @@ add_executable(${PROJECT_NAME} "")
 target_include_directories(${PROJECT_NAME} PUBLIC include)
 target_sources(${PROJECT_NAME} PUBLIC ${SOURCES})
 
-INCLUDE(FindPkgConfig)
+include(FindPkgConfig)
 
-PKG_SEARCH_MODULE(SDL2 REQUIRED sdl2)
-PKG_SEARCH_MODULE(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
+pkg_search_module(SDL2 REQUIRED sdl2)
+pkg_search_module(SDL2IMAGE REQUIRED SDL2_image>=2.0.0)
 
 include_directories(${SDL2_INCLUDE_DIRS} ${SDL2IMAGE_INCLUDE_DIRS})
 target_link_libraries(${PROJECT_NAME} ${SDL2_LIBRARIES} ${SDL2IMAGE_LIBRARIES})
