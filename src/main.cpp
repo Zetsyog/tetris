@@ -4,7 +4,7 @@
 int main(int argc, char **argv) {
 	App *app = App::getInstance();
 	app->init();
-	app->setCurrentScreen(new MainScreen());
+	app->setCurrentScreen(new GameScreen());
 	int ret = app->start();
 	delete app;
 	return ret;

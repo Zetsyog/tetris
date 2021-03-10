@@ -18,6 +18,7 @@ set (SOURCES src/main.cpp
           src/events/EventManager.cpp
           src/gui/Screen.cpp
           src/gui/MainScreen.cpp
+          src/gui/GameScreen.cpp
           src/util/FPSCounter.cpp
           src/graphics/Renderer.cpp
           src/graphics/Drawable.cpp

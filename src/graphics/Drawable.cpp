@@ -4,10 +4,6 @@ Drawable::Drawable(): visible(true) {
 
 }
 
-Drawable::~Drawable() {
-
-}
-
 void Drawable::setVisible(bool visible) {
     this->visible = visible;
 }

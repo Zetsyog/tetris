@@ -2,16 +2,14 @@
 #include "App.hpp"
 #include <iostream>
 
-Screen::Screen() : children() {
+Screen::Screen() : children(), app(nullptr) {
+	app = App::getInstance();
 }
 
 Screen::~Screen() {
 }
 
-void Screen::init(App &app) {
-	for (const auto &child : children) {
-		child->init(app.getRenderer());
-	}
+void Screen::init() {
 }
 
 void Screen::dispose() {
@@ -22,6 +20,7 @@ void Screen::dispose() {
 }
 
 Drawable *Screen::add(Drawable *child) {
+	child->init(app->getRenderer());
 	children.push_back(child);
 	return child;
 }

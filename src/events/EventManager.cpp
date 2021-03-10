@@ -42,7 +42,6 @@ void EventManager::update() {
 			keyDown(&event.key);
 			break;
 		case SDL_KEYUP:
-			cout << "hey2" << endl;
 			keyUp(&event.key);
 			break;
 		case SDL_QUIT:

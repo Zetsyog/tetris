@@ -12,6 +12,7 @@ class Piece : public Drawable {
 	vector<array<array<int, 4>, 4>> shapes;
 	Texture *tmp;
 	int currentShape;
+	int x, y;
 
   public:
 	Piece(std::vector<array<int, 4>> shapes);
@@ -22,6 +23,11 @@ class Piece : public Drawable {
 	virtual void dispose();
 
 	void rotate();
+	void setX(int x);
+	void setY(int y);
+	void setPosition(int x, int y);
+	int getX();
+	int getY();
 };
 
 #endif

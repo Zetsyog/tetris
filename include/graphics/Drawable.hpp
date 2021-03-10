@@ -8,9 +8,10 @@ class Drawable {
   private:
 	bool visible;
 
-  public:
+  protected:
 	Drawable();
-	virtual ~Drawable();
+
+  public:
 	virtual void init(Renderer &renderer)	   = 0;
 	virtual void update(double delta)		   = 0;
 	virtual void render(Renderer &renderer)	   = 0;

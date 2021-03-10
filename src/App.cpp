@@ -95,7 +95,7 @@ void App::setCurrentScreen(Screen *screen) {
 		currentScreen->dispose();
 		delete currentScreen;
 	}
-	screen->init(*this);
+	screen->init();
 	currentScreen = screen;
 }
 
