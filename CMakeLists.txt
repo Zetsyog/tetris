@@ -13,6 +13,9 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
 set (SOURCES src/main.cpp
           src/App.cpp
+          src/game/Piece.cpp
+          src/game/Game.cpp
+          src/events/EventManager.cpp
           src/gui/Screen.cpp
           src/gui/MainScreen.cpp
           src/util/FPSCounter.cpp

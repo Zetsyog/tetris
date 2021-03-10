@@ -21,6 +21,10 @@ Texture::Texture(Renderer &renderer, std::string path) : path(path) {
 	}
 }
 
+void Texture::dispose() {
+	SDL_DestroyTexture(get_gTexture());
+}
+
 SDL_Texture *Texture::get_gTexture() {
 	return gTexture;
 }

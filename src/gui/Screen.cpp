@@ -1,4 +1,5 @@
 #include "gui/Screen.hpp"
+#include "App.hpp"
 #include <iostream>
 
 Screen::Screen() : children() {
@@ -7,23 +8,29 @@ Screen::Screen() : children() {
 Screen::~Screen() {
 }
 
-void Screen::init(Renderer &renderer) {
+void Screen::init(App &app) {
 	for (const auto &child : children) {
-		child->init(renderer);
+		child->init(app.getRenderer());
 	}
 }
 
 void Screen::dispose() {
 	for (const auto &child : children) {
 		child->dispose();
+		delete (child);
 	}
+}
+
+Drawable *Screen::add(Drawable *child) {
+	children.push_back(child);
+	return child;
 }
 
 void Screen::render(double delta, Renderer &renderer) {
 	for (const auto &child : children) {
 		child->update(delta);
 		if (child->isVisible()) {
-		    child->render(renderer);
+			child->render(renderer);
 		}
 	}
 }

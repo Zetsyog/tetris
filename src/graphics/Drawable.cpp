@@ -1,6 +1,6 @@
 #include "graphics/Drawable.hpp"
 
-Drawable::Drawable(): visible(false) {
+Drawable::Drawable(): visible(true) {
 
 }
 
