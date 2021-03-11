@@ -5,6 +5,7 @@ void GameScreen::init() {
 	app->getEventManager().addListener(this);
 	game = new Game();
 	add(game);
+	game->start();
 }
 
 void GameScreen::render(double delta, Renderer &renderer) {
@@ -20,13 +21,27 @@ void GameScreen::dispose() {
 void GameScreen::keyUp(SDL_KeyboardEvent *event) {
 	switch (event->keysym.scancode) {
 	case SDL_SCANCODE_LEFT:
-		game->movePiece(DIRECTION_LEFT);
+		game->action(ACTION_MOVE_LEFT);
 		break;
 	case SDL_SCANCODE_RIGHT:
-		game->movePiece(DIRECTION_RIGHT);
+		game->action(ACTION_MOVE_RIGHT);
+		break;
+	case SDL_SCANCODE_UP:
+		game->action(ACTION_ROTATE);
+		break;
+	case SDL_SCANCODE_DOWN:
+		game->setSpeed(1);
 		break;
 	}
 }
 
 void GameScreen::keyDown(SDL_KeyboardEvent *event) {
+	switch (event->keysym.scancode) {
+	case SDL_SCANCODE_DOWN:
+		game->setSpeed(4);
+		break;
+
+	default:
+		break;
+	}
 }

@@ -4,7 +4,7 @@
 
 namespace {
 const int SCREEN_WIDTH	= 800;
-const int SCREEN_HEIGHT = 600;
+const int SCREEN_HEIGHT = 800;
 const char *TITLE		= "Tetris";
 } // namespace
 
@@ -86,7 +86,7 @@ void App::loop() {
 		renderer->render();
 
 		fps.update();
-		SDL_Delay(16);
+		SDL_Delay(32);
 	}
 }
 
