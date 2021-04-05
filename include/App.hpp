@@ -1,29 +1,38 @@
 #ifndef APP_H
 #define APP_H
 
-#include <SDL2/SDL.h>
+#include "events/EventManager.hpp"
+#include "graphics/Renderer.hpp"
 #include "gui/Screen.hpp"
 #include "util/FPSCounter.hpp"
-#include "graphics/Renderer.hpp"
+#include <SDL2/SDL.h>
 
 class App {
   private:
 	Screen *currentScreen;
 	Renderer *renderer;
+	EventManager eventManager;
 	SDL_Window *window;
-	bool quit;
+	bool running;
 	FPSCounter fps;
 
-  private:
 	void loop();
-	void pollEvents();
 	void dispose();
 
-  public:
+  protected:
 	App();
+	static App *instance;
+
+  public:
+	App(App &other) = delete;
 	void init();
 	int start();
+	void quit();
 	void setCurrentScreen(Screen *screen);
+	EventManager &getEventManager();
+	Renderer &getRenderer();
+
+	static App *getInstance();
 };
 
 #endif
