@@ -1,5 +1,4 @@
 #include "App.hpp"
-#include <SDL2/SDL_image.h>
 #include <iostream>
 
 namespace {
@@ -8,21 +7,15 @@ const int SCREEN_HEIGHT = 800;
 const char *TITLE		= "Tetris";
 } // namespace
 
-App *App::instance = nullptr;
-
 App::App() : currentScreen(nullptr), running(true), fps(1.0) {
-}
-
-App *App::getInstance() {
-	if (App::instance == nullptr) {
-		App::instance = new App();
-	}
-	return App::instance;
+	initSDL();
+	renderer		= new Renderer(this);
+	resourceManager = new ResourceManager(this);
+	eventManager	= new EventManager(this);
 }
 
 int App::start() {
 	loop();
-	dispose();
 	return 0;
 }
 
@@ -30,7 +23,7 @@ void App::quit() {
 	running = false;
 }
 
-void App::init() {
+void App::initSDL() {
 	int windowFlags;
 	windowFlags = 0;
 
@@ -50,8 +43,6 @@ void App::init() {
 	}
 
 	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
-
-	renderer = new Renderer(window);
 
 	int imgFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -75,7 +66,7 @@ void App::loop() {
 		now	  = SDL_GetPerformanceCounter();
 		delta = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
 
-		eventManager.update();
+		eventManager->update();
 
 		renderer->clear();
 
@@ -92,23 +83,31 @@ void App::loop() {
 
 void App::setCurrentScreen(Screen *screen) {
 	if (currentScreen != nullptr) {
-		currentScreen->dispose();
 		delete currentScreen;
 	}
-	screen->init();
+	screen->init(this);
 	currentScreen = screen;
 }
 
 EventManager &App::getEventManager() {
-	return eventManager;
+	return *eventManager;
 }
 
-void App::dispose() {
-	renderer->dispose();
+SDL_Window *App::get_glWindow() {
+	return window;
+}
+
+App::~App() {
+	delete renderer;
+	delete resourceManager;
 	SDL_DestroyWindow(window);
 	SDL_Quit();
 }
 
 Renderer &App::getRenderer() {
 	return *renderer;
+}
+
+ResourceManager &App::getResourceManager() {
+	return *resourceManager;
 }

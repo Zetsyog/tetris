@@ -2,8 +2,7 @@
 #include "gui/Screen.hpp"
 
 int main(int argc, char **argv) {
-	App *app = App::getInstance();
-	app->init();
+	App *app = new App();
 	app->setCurrentScreen(new GameScreen());
 	int ret = app->start();
 	delete app;

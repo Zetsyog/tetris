@@ -1,14 +1,16 @@
 #include "game/Game.hpp"
+#include "App.hpp"
 
-Game::Game()
+Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), speed(DEFAULT_SPEED),
-	  movementTimer(0), running(false), currentPiece(nullptr) {
+	  movementTimer(0), running(false), currentPiece(nullptr), app(app) {
 	// T piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}}));
-}
+		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}},
+				  app.getResourceManager().get("texture:block:blue")));
 
-Game::~Game() {
+	tmp		   = app.getResourceManager().get("texture:block:blue");
+	background = app.getResourceManager().get("texture:background");
 }
 
 void Game::start() {
@@ -25,19 +27,11 @@ void Game::resume() {
 	running = true;
 }
 
-void Game::init(Renderer &renderer) {
-	tmp		   = new Texture(renderer, "assets/texture/block/blue.png");
-	background = new Texture(renderer, "assets/texture/background.png");
-	for (const auto &piece : pieceAvailable) {
-		piece->init(renderer);
-	}
-}
-
 void Game::update(double delta) {
 	if (running) {
 		movementTimer += delta;
 
-		if (movementTimer > 1 / speed) {
+		if (movementTimer >= 1 / speed) {
 			movementTimer -= 1 / speed;
 			action(ACTION_MOVE_DOWN);
 		}
@@ -70,7 +64,6 @@ void Game::checkLine() {
 
 void Game::nextPiece() {
 	if (currentPiece != nullptr) {
-		currentPiece->dispose();
 		delete currentPiece;
 	}
 	// TODO : real random piece
@@ -107,8 +100,6 @@ void Game::action(int type) {
 		} else {
 			currentPiece->setY(currentPiece->getY() + 1);
 		}
-	} else if (type == ACTION_DOWN) {
-
 	} else if (type == ACTION_ROTATE) {
 		currentPiece->rotate();
 		if (!isValid(*currentPiece))
@@ -189,15 +180,9 @@ void Game::printBoard() {
 	}
 }
 
-void Game::dispose() {
+Game::~Game() {
 	for (const auto &piece : pieceAvailable) {
-		piece->dispose();
 		delete piece;
 	}
-	currentPiece->dispose();
-	tmp->dispose();
-	background->dispose();
-	delete background;
-	delete tmp;
 	delete currentPiece;
 }

@@ -4,7 +4,7 @@
 
 using namespace std;
 
-EventManager::EventManager() : listeners() {
+EventManager::EventManager(App *app) : listeners(), app(app) {
 }
 
 void EventManager::addListener(EventListener *listener) {
@@ -45,7 +45,7 @@ void EventManager::update() {
 			keyUp(&event.key);
 			break;
 		case SDL_QUIT:
-			App::getInstance()->quit();
+			app->quit();
 			break;
 		}
 	}

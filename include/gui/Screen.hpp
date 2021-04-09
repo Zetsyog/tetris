@@ -19,10 +19,9 @@ class Screen {
   public:
 	Screen();
 	virtual ~Screen();
-	virtual void init();
+	virtual void init(App *app);
 	virtual void render(double delta, Renderer &renderer);
 	virtual void resize(int width, int height);
-	virtual void dispose();
 
 	Drawable *add(Drawable *child);
 };
@@ -31,9 +30,8 @@ class MainScreen : public Screen, public EventListener {
   public:
 	MainScreen();
 	virtual ~MainScreen();
-	virtual void init();
+	virtual void init(App *app);
 	virtual void render(double delta, Renderer &renderer);
-	virtual void dispose();
 	virtual void keyUp(SDL_KeyboardEvent *event);
 	virtual void keyDown(SDL_KeyboardEvent *event);
 
@@ -47,9 +45,9 @@ class GameScreen : public Screen, public EventListener {
 	Game *game;
 
   public:
-	virtual void init();
+	virtual ~GameScreen();
+	virtual void init(App *app);
 	virtual void render(double delta, Renderer &renderer);
-	virtual void dispose();
 	virtual void keyUp(SDL_KeyboardEvent *event);
 	virtual void keyDown(SDL_KeyboardEvent *event);
 };

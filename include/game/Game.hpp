@@ -13,15 +13,18 @@
 
 #define ACTION_MOVE_LEFT 0
 #define ACTION_MOVE_RIGHT 1
-#define ACTION_DOWN 2
+#define ACTION_MOVE_DOWN 2
 #define ACTION_ROTATE 3
-#define ACTION_MOVE_DOWN 4
+
+class App;
 
 /**
  * A class that represent the game and its logic
  */
 class Game : public Drawable {
   private:
+	App &app;
+
 	/** Collection of piece that are available in the game */
 	std::vector<Piece *> pieceAvailable;
 	/** The game board that contains all the tetrominos blocks */
@@ -57,7 +60,7 @@ class Game : public Drawable {
 	void printBoard();
 
   public:
-	Game();
+	Game(App &app);
 	~Game();
 	/**
 	 * Start the game
@@ -68,11 +71,9 @@ class Game : public Drawable {
 	/** Resume the game */
 	void resume();
 
-	virtual void init(Renderer &renderer);
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
 	virtual void resize(int width, int height);
-	virtual void dispose();
 
 	/**
 	 * Process a given action
