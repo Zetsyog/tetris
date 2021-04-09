@@ -5,7 +5,25 @@ Game::Game()
 	  movementTimer(0), running(false), currentPiece(nullptr) {
 	// T piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}}));
+		new Piece({{0, 4, 8, 9}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}}));
+	// L piece
+	pieceAvailable.push_back(
+		new Piece({{0, 4, 5, 8}, {4, 5, 6, 8}, {0, 1, 5, 9}, {2, 4, 5, 6}}));
+	pieceAvailable.push_back(
+		new Piece({{1, 5, 8, 9}, {0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}}));
+	// O piece
+	pieceAvailable.push_back(
+		new Piece({{0, 1, 4, 5}}));
+	// S piece
+	pieceAvailable.push_back(
+		new Piece({{0, 1, 5, 6}, {1, 5, 4, 8}}));
+	pieceAvailable.push_back(
+		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}}));
+	// I piece
+	pieceAvailable.push_back(
+		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}}));
+	
+
 }
 
 Game::~Game() {
@@ -66,6 +84,13 @@ void Game::resize(int width, int height) {
 
 void Game::checkLine() {
 	// TODO
+	int y;
+	for (y=0; y<22; y++) {
+		if(board[0][y] == board[1][y] == board[2][y] == board[3][y] == board[4][y] ==
+			board[5][y] == board[6][y] == board[7][y] == board[8][y] == board[9][y]== 1)
+				board[0][y] = board[1][y] = board[2][y] = board[3][y] = board[4][y] =
+				board[5][y] = board[6][y] = board[7][y] = board[8][y] = board[9][y] = O;
+	} 
 }
 
 void Game::nextPiece() {
@@ -74,7 +99,7 @@ void Game::nextPiece() {
 		delete currentPiece;
 	}
 	// TODO : real random piece
-	currentPiece = new Piece(*pieceAvailable[0]);
+	currentPiece = new Piece(*pieceAvailable[std::rand()%7]);
 	currentPiece->setPosition(4, 0);
 }
 

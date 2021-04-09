@@ -59,3 +59,4 @@ void Renderer::render() {
 
 void Renderer::dispose() {
 	SDL_DestroyRenderer(gRenderer);
+}
