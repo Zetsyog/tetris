@@ -4,35 +4,35 @@
 #include "events/EventManager.hpp"
 #include "graphics/Renderer.hpp"
 #include "gui/Screen.hpp"
+#include "resources/ResourceManager.hpp"
 #include "util/FPSCounter.hpp"
 #include <SDL2/SDL.h>
+#include <SDL2/SDL_image.h>
 
 class App {
   private:
+	ResourceManager *resourceManager;
 	Screen *currentScreen;
 	Renderer *renderer;
-	EventManager eventManager;
+	EventManager *eventManager;
 	SDL_Window *window;
 	bool running;
 	FPSCounter fps;
 
 	void loop();
-	void dispose();
-
-  protected:
-	App();
-	static App *instance;
+	void initSDL();
 
   public:
+	App();
 	App(App &other) = delete;
-	void init();
+	~App();
 	int start();
 	void quit();
 	void setCurrentScreen(Screen *screen);
 	EventManager &getEventManager();
 	Renderer &getRenderer();
-
-	static App *getInstance();
+	ResourceManager &getResourceManager();
+	SDL_Window *get_glWindow();
 };
 
 #endif

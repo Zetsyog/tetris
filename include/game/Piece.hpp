@@ -49,13 +49,11 @@ class Piece : public Drawable {
 	 * 12 13 14 15
 	 * @param shapes
 	 */
-	Piece(std::vector<array<int, 4>> shapes);
+	Piece(std::vector<array<int, 4>> shapes, Texture *t);
 
-	virtual void init(Renderer &renderer);
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
 	virtual void resize(int width, int height);
-	virtual void dispose();
 
 	/** Return current shape */
 	array<array<int, 4>, 4> getCurrentShape();

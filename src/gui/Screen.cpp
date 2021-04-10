@@ -3,24 +3,19 @@
 #include <iostream>
 
 Screen::Screen() : children(), app(nullptr) {
-	app = App::getInstance();
+}
+
+void Screen::init(App *app) {
+	this->app = app;
 }
 
 Screen::~Screen() {
-}
-
-void Screen::init() {
-}
-
-void Screen::dispose() {
 	for (const auto &child : children) {
-		child->dispose();
 		delete (child);
 	}
 }
 
 Drawable *Screen::add(Drawable *child) {
-	child->init(app->getRenderer());
 	children.push_back(child);
 	return child;
 }

@@ -1,9 +1,9 @@
 #include "gui/Screen.hpp"
 
-void GameScreen::init() {
-	Screen::init();
+void GameScreen::init(App *app) {
+	Screen::init(app);
 	app->getEventManager().addListener(this);
-	game = new Game();
+	game = new Game(*app);
 	add(game);
 	game->start();
 }
@@ -12,8 +12,7 @@ void GameScreen::render(double delta, Renderer &renderer) {
 	Screen::render(delta, renderer);
 }
 
-void GameScreen::dispose() {
-	Screen::dispose();
+GameScreen::~GameScreen() {
 	app->getEventManager().removeListener(this);
 	delete game;
 }

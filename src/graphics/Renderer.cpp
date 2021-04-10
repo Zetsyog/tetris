@@ -1,9 +1,11 @@
 #include "graphics/Renderer.hpp"
+#include "App.hpp"
 #include "graphics/Texture.hpp"
 
-Renderer::Renderer(SDL_Window *window)
-	: window(window), originX(0), originY(0), originStack() {
-	gRenderer = SDL_CreateRenderer(window, -1, SDL_RENDERER_ACCELERATED);
+Renderer::Renderer(App *app)
+	: window(window), originX(0), originY(0), originStack(), app(app) {
+	gRenderer =
+		SDL_CreateRenderer(app->get_glWindow(), -1, SDL_RENDERER_ACCELERATED);
 
 	if (!gRenderer) {
 		printf("Failed to create renderer: %s\n", SDL_GetError());
@@ -57,6 +59,6 @@ void Renderer::render() {
 	SDL_RenderPresent(gRenderer);
 }
 
-void Renderer::dispose() {
+Renderer::~Renderer() {
 	SDL_DestroyRenderer(gRenderer);
 }

@@ -1,12 +1,13 @@
 #include "game/Piece.hpp"
+#include "App.hpp"
 #include "game/Game.hpp"
 #include <iostream>
 #include <string.h>
 
 using namespace std;
 
-Piece::Piece(vector<array<int, 4>> shapes)
-	: currentShape(0), shapes(), x(0), y(0) {
+Piece::Piece(vector<array<int, 4>> shapes, Texture *t)
+	: currentShape(0), shapes(), x(0), y(0), tmp(t) {
 	array<array<int, 4>, 4> tmp{};
 	for (const auto &shape : shapes) {
 		memset(tmp.data(), 0, sizeof(tmp));
@@ -16,10 +17,6 @@ Piece::Piece(vector<array<int, 4>> shapes)
 		this->shapes.push_back(tmp);
 	}
 	calculateBounds();
-}
-
-void Piece::init(Renderer &renderer) {
-	tmp = new Texture(renderer, "assets/texture/block/blue.png");
 }
 
 void Piece::update(double delta) {
@@ -41,9 +38,6 @@ array<array<int, 4>, 4> Piece::getCurrentShape() {
 }
 
 void Piece::resize(int width, int height) {
-}
-
-void Piece::dispose() {
 }
 
 void Piece::rotate() {
