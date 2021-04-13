@@ -7,30 +7,29 @@ Game::Game(App &app)
 	// T piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}},
-						app.getResourceManager().get("texture:block:blue")));
+				  app.getResourceManager().get("texture:block:blue")));
 	// L piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 8, 9}, {4, 5, 6, 8}, {0, 1, 5, 9}, {2, 4, 5, 6}},
-						app.getResourceManager().get("texture:block:blue")));
+				  app.getResourceManager().get("texture:block:blue")));
 	pieceAvailable.push_back(
 		new Piece({{1, 5, 8, 9}, {0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}},
-						app.getResourceManager().get("texture:block:blue")));
+				  app.getResourceManager().get("texture:block:blue")));
 	// O piece
-	pieceAvailable.push_back(
-		new Piece({{0, 1, 4, 5}},
-						app.getResourceManager().get("texture:block:blue")));
+	pieceAvailable.push_back(new Piece(
+		{{0, 1, 4, 5}}, app.getResourceManager().get("texture:block:blue")));
 	// S piece
 	pieceAvailable.push_back(
 		new Piece({{0, 1, 5, 6}, {1, 5, 4, 8}},
-						app.getResourceManager().get("texture:block:blue")));
+				  app.getResourceManager().get("texture:block:blue")));
 	pieceAvailable.push_back(
 		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}},
-						app.getResourceManager().get("texture:block:blue")));
+				  app.getResourceManager().get("texture:block:blue")));
 	// I piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}},
-						app.getResourceManager().get("texture:block:blue")));
-	
+				  app.getResourceManager().get("texture:block:blue")));
+
 	tmp		   = app.getResourceManager().get("texture:block:blue");
 	background = app.getResourceManager().get("texture:background");
 }
@@ -80,35 +79,31 @@ void Game::render(Renderer &renderer) {
 void Game::resize(int width, int height) {
 }
 
-
 void Game::checkLine() {
 	int lineComplete = 0;
-	for (int y=0; y<BOARD_HEIGHT; y++) {
+	for (int y = 0; y < BOARD_HEIGHT; y++) {
 		lineComplete = 1;
-		for(int x = 0; x < BOARD_WIDTH; x++) {
-			if(board[x][y] == 0) {
+		for (int x = 0; x < BOARD_WIDTH; x++) {
+			if (board[x][y] == 0) {
 				lineComplete = 0;
 				break;
 			}
 		}
-		if(lineComplete) {
-			for(int x = 0; x < BOARD_WIDTH; x++) {
+		if (lineComplete) {
+			for (int x = 0; x < BOARD_WIDTH; x++) {
 				board[x][y] = 0;
-				for(int i= y ; i > 1; i--) { 
-					board[x][i] = board[x][i-1];
-				}		
+				for (int i = y; i > 1; i--) {
+					board[x][i] = board[x][i - 1];
+				}
 			}
-			
 		}
-
-
-	} 
+	}
 }
 void Game::nextPiece() {
 	if (currentPiece != nullptr) {
 		delete currentPiece;
 	}
-	currentPiece = new Piece(*pieceAvailable[std::rand()%7]);
+	currentPiece = new Piece(*pieceAvailable[std::rand() % 7]);
 	currentPiece->setPosition(4, 0);
 }
 
