@@ -1,36 +1,34 @@
 #include "game/Game.hpp"
 #include "App.hpp"
+#include <ctime>
 
 Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), speed(DEFAULT_SPEED),
 	  movementTimer(0), running(false), currentPiece(nullptr), app(app) {
+	std::srand(std::time(nullptr));
+
 	// T piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}},
-				  app.getResourceManager().get("texture:block:blue")));
+				  Color::get(COLOR_BLUE)));
 	// L piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 8, 9}, {4, 5, 6, 8}, {0, 1, 5, 9}, {2, 4, 5, 6}},
-				  app.getResourceManager().get("texture:block:blue")));
+				  Color::get(COLOR_BLUE)));
 	pieceAvailable.push_back(
 		new Piece({{1, 5, 8, 9}, {0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}},
-				  app.getResourceManager().get("texture:block:blue")));
+				  Color::get(COLOR_BLUE)));
 	// O piece
-	pieceAvailable.push_back(new Piece(
-		{{0, 1, 4, 5}}, app.getResourceManager().get("texture:block:blue")));
+	pieceAvailable.push_back(new Piece({{0, 1, 4, 5}}, Color::get(COLOR_BLUE)));
 	// S piece
 	pieceAvailable.push_back(
-		new Piece({{0, 1, 5, 6}, {1, 5, 4, 8}},
-				  app.getResourceManager().get("texture:block:blue")));
+		new Piece({{0, 1, 5, 6}, {1, 5, 4, 8}}, Color::get(COLOR_BLUE)));
 	pieceAvailable.push_back(
-		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}},
-				  app.getResourceManager().get("texture:block:blue")));
+		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}}, Color::get(COLOR_BLUE)));
 	// I piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}},
-				  app.getResourceManager().get("texture:block:blue")));
+		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}}, Color::get(COLOR_BLUE)));
 
-	tmp		   = app.getResourceManager().get("texture:block:blue");
 	background = app.getResourceManager().get("texture:background");
 }
 
@@ -62,14 +60,16 @@ void Game::update(double delta) {
 void Game::render(Renderer &renderer) {
 	renderer.draw(background, 0, 0, TILE_SIZE * BOARD_WIDTH,
 				  TILE_SIZE * BOARD_HEIGHT);
+
 	if (currentPiece != nullptr) {
 		currentPiece->render(renderer);
 	}
 
 	for (int i = 0; i < BOARD_WIDTH; i++) {
 		for (int j = 0; j < BOARD_HEIGHT; j++) {
-			if (board[i][j] == 1) {
-				renderer.draw(tmp, i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE,
+			if (board[i][j] != 0) {
+				renderer.draw(Color::get(board[i][j]).getTexture(),
+							  i * TILE_SIZE, j * TILE_SIZE, TILE_SIZE,
 							  TILE_SIZE);
 			}
 		}
@@ -100,11 +100,24 @@ void Game::checkLine() {
 	}
 }
 void Game::nextPiece() {
+	Color nextColor;
+
 	if (currentPiece != nullptr) {
+		nextColor = currentPiece->getColor();
+		while (nextColor == currentPiece->getColor()) {
+			nextColor =
+				Color::get(COLOR_FIRST_ID +
+						   std::rand() / ((RAND_MAX + 1u) / COLOR_LAST_ID));
+		}
 		delete currentPiece;
+	} else {
+		nextColor = Color::get(COLOR_BLUE);
 	}
-	currentPiece = new Piece(*pieceAvailable[std::rand() % 7]);
+
+	currentPiece =
+		new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
 	currentPiece->setPosition(4, 0);
+	currentPiece->setColor(nextColor);
 }
 
 void Game::copyPieceToBoard(Piece &piece) {
@@ -113,7 +126,8 @@ void Game::copyPieceToBoard(Piece &piece) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (shape[i][j] == 1) {
-				board[piece.getX() + i][piece.getY() + j] = 1;
+				board[piece.getX() + i][piece.getY() + j] =
+					piece.getColor().getId();
 			}
 		}
 	}
@@ -152,12 +166,12 @@ bool Game::canGoDown(Piece &piece) {
 			j++;
 		}
 		if (j < 4) {
-			while (shape[i][j] == 1 && j < 4) {
+			while (shape[i][j] != 0 && j < 4) {
 				j++;
 			}
 			int x = piece.getX() + i;
 			int y = piece.getY() + j;
-			if (y >= BOARD_HEIGHT || board[x][y] == 1) {
+			if (y >= BOARD_HEIGHT || board[x][y] != 0) {
 				return false;
 			}
 		}
@@ -185,7 +199,8 @@ bool Game::isValid(Piece &piece) {
 }
 
 void Game::setSpeed(double speed) {
-	this->speed = speed;
+	this->speed	  = speed;
+	movementTimer = movementTimer / (1 / speed);
 }
 
 int Game::getWidth() {

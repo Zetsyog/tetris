@@ -26,20 +26,6 @@ class Screen {
 	Drawable *add(Drawable *child);
 };
 
-class MainScreen : public Screen, public EventListener {
-  public:
-	MainScreen();
-	virtual ~MainScreen();
-	virtual void init(App *app);
-	virtual void render(double delta, Renderer &renderer);
-	virtual void keyUp(SDL_KeyboardEvent *event);
-	virtual void keyDown(SDL_KeyboardEvent *event);
-
-  private:
-	Texture *test;
-	Piece *piece;
-};
-
 class GameScreen : public Screen, public EventListener {
   private:
 	Game *game;

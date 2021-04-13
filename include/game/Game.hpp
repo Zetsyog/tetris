@@ -40,7 +40,7 @@ class Game : public Drawable {
 	/** If the game is runnning or paused */
 	bool running;
 
-	Texture *tmp, *background;
+	Texture *background;
 
 	/** Copy current piece shape to the game board */
 	void copyPieceToBoard(Piece &piece);

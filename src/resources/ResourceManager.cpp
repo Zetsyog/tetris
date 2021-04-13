@@ -1,5 +1,6 @@
 #include "resources/ResourceManager.hpp"
 #include "App.hpp"
+#include "graphics/Color.hpp"
 
 #include <iostream>
 
@@ -11,18 +12,22 @@ ResourceManager::ResourceManager(App *app) : app(app) {
 
 void ResourceManager::registerTextures() {
 	Renderer &r = app->getRenderer();
+
 	add("texture:background", new Texture(r, "assets/texture/background.png"));
 
 	add("texture:block:blue", new Texture(r, "assets/texture/block/blue.png"));
-	add("texture:block:gray", new Texture(r, "assets/texture/block/gray.png"));
+	add("texture:block:cyan", new Texture(r, "assets/texture/block/cyan.png"));
 	add("texture:block:green",
 		new Texture(r, "assets/texture/block/green.png"));
-	add("texture:block:pink", new Texture(r, "assets/texture/block/pink.png"));
+	add("texture:block:orange",
+		new Texture(r, "assets/texture/block/orange.png"));
+	add("texture:block:purple",
+		new Texture(r, "assets/texture/block/purple.png"));
 	add("texture:block:red", new Texture(r, "assets/texture/block/red.png"));
-	add("texture:block:violet",
-		new Texture(r, "assets/texture/block/violet.png"));
 	add("texture:block:yellow",
 		new Texture(r, "assets/texture/block/yellow.png"));
+
+	Color::init(*this);
 }
 
 void ResourceManager::add(std::string id, Texture *resource) {

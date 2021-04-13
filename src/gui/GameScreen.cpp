@@ -37,7 +37,7 @@ void GameScreen::keyUp(SDL_KeyboardEvent *event) {
 void GameScreen::keyDown(SDL_KeyboardEvent *event) {
 	switch (event->keysym.scancode) {
 	case SDL_SCANCODE_DOWN:
-		game->setSpeed(4);
+		game->setSpeed(8);
 		break;
 
 	default:

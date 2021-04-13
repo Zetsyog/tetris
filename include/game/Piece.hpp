@@ -1,6 +1,7 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include "graphics/Color.hpp"
 #include "graphics/Drawable.hpp"
 #include "graphics/Texture.hpp"
 #include <array>
@@ -31,7 +32,7 @@ class Piece : public Drawable {
 	/** Height of current shape */
 	int height;
 
-	Texture *tmp;
+	Color color;
 
 	/** Calculate current shape width and height */
 	void calculateBounds();
@@ -49,7 +50,7 @@ class Piece : public Drawable {
 	 * 12 13 14 15
 	 * @param shapes
 	 */
-	Piece(std::vector<array<int, 4>> shapes, Texture *t);
+	Piece(std::vector<array<int, 4>> shapes, Color color);
 
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
@@ -77,6 +78,9 @@ class Piece : public Drawable {
 
 	/** Set position */
 	void setPosition(int x, int y);
+
+	void setColor(Color color);
+	Color getColor();
 
 	/**
 	 * @return x position in board coordinate
