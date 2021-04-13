@@ -2,7 +2,6 @@
 #include <SDL2/SDL_image.h>
 
 Texture::Texture(Renderer &renderer, std::string path) : path(path) {
-
 	// Load image at specified path
 	SDL_Surface *loadedSurface = IMG_Load(path.c_str());
 	if (loadedSurface == NULL) {
@@ -10,7 +9,8 @@ Texture::Texture(Renderer &renderer, std::string path) : path(path) {
 			   IMG_GetError());
 	} else {
 		// Create texture from surface pixels
-		gTexture = SDL_CreateTextureFromSurface(renderer.get_gRenderer(), loadedSurface);
+		gTexture = SDL_CreateTextureFromSurface(renderer.get_gRenderer(),
+												loadedSurface);
 		if (gTexture == NULL) {
 			printf("Unable to create texture from %s! SDL Error: %s\n",
 				   path.c_str(), SDL_GetError());
@@ -19,6 +19,10 @@ Texture::Texture(Renderer &renderer, std::string path) : path(path) {
 		// Get rid of old loaded surface
 		SDL_FreeSurface(loadedSurface);
 	}
+}
+
+Texture::~Texture() {
+	SDL_DestroyTexture(get_gTexture());
 }
 
 SDL_Texture *Texture::get_gTexture() {

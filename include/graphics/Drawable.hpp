@@ -1,3 +1,4 @@
+  
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
@@ -8,14 +9,13 @@ class Drawable {
   private:
 	bool visible;
 
-  public:
+  protected:
 	Drawable();
-	virtual ~Drawable();
-	virtual void init(Renderer &renderer)	   = 0;
+
+  public:
 	virtual void update(double delta)		   = 0;
 	virtual void render(Renderer &renderer)	   = 0;
 	virtual void resize(int width, int height) = 0;
-	virtual void dispose()					   = 0;
 	virtual void setVisible(bool visible);
 	virtual bool isVisible();
 };

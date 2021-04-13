@@ -8,6 +8,7 @@
 class Texture {
   public:
 	Texture(Renderer &renderer, std::string path);
+	~Texture();
 	SDL_Texture *get_gTexture();
 
   private:
