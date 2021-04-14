@@ -7,28 +7,34 @@ Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), speed(DEFAULT_SPEED),
 	  movementTimer(0), running(false), currentPiece(nullptr), app(app) {
 	std::srand(std::time(nullptr));
-
-	// T piece
+	// I piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 5, 8}, {4, 5, 6, 9}, {2, 6, 10, 5}, {5, 8, 9, 10}},
+		new Piece({{4, 5, 6, 7}, {2, 6, 10, 14}, {8, 9, 10, 11}, {1, 5, 9, 13}},
+				  Color::get(COLOR_CYAN)));
+
+	// J piece
+	pieceAvailable.push_back(
+		new Piece({{0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}, {1, 5, 8, 9}},
 				  Color::get(COLOR_BLUE)));
 	// L piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 8, 9}, {4, 5, 6, 8}, {0, 1, 5, 9}, {2, 4, 5, 6}},
-				  Color::get(COLOR_BLUE)));
-	pieceAvailable.push_back(
-		new Piece({{1, 5, 8, 9}, {0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}},
-				  Color::get(COLOR_BLUE)));
+		new Piece({{2, 4, 5, 6}, {1, 5, 9, 10}, {4, 5, 6, 8}, {0, 1, 5, 9}},
+				  Color::get(COLOR_ORANGE)));
 	// O piece
-	pieceAvailable.push_back(new Piece({{0, 1, 4, 5}}, Color::get(COLOR_BLUE)));
+	pieceAvailable.push_back(
+		new Piece({{1, 2, 5, 6}}, Color::get(COLOR_YELLOW)));
 	// S piece
 	pieceAvailable.push_back(
-		new Piece({{0, 1, 5, 6}, {1, 5, 4, 8}}, Color::get(COLOR_BLUE)));
+		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}, {5, 6, 8, 9}, {0, 4, 5, 9}},
+				  Color::get(COLOR_GREEN)));
+	// T piece
 	pieceAvailable.push_back(
-		new Piece({{1, 2, 4, 5}, {1, 5, 6, 10}}, Color::get(COLOR_BLUE)));
-	// I piece
+		new Piece({{1, 4, 5, 6}, {1, 5, 6, 9}, {4, 5, 6, 9}, {1, 4, 5, 9}},
+				  Color::get(COLOR_PURPLE)));
+	// Z piece
 	pieceAvailable.push_back(
-		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}}, Color::get(COLOR_BLUE)));
+		new Piece({{0, 1, 5, 6}, {2, 5, 6, 9}, {4, 5, 9, 10}, {1, 4, 5, 8}},
+				  Color::get(COLOR_RED)));
 
 	grid	   = app.getResourceManager().get("texture:grid");
 	background = app.getResourceManager().get("texture:background");
@@ -104,24 +110,13 @@ void Game::checkLine() {
 	}
 }
 void Game::nextPiece() {
-	Color nextColor;
-
 	if (currentPiece != nullptr) {
-		nextColor = currentPiece->getColor();
-		while (nextColor == currentPiece->getColor()) {
-			nextColor =
-				Color::get(COLOR_FIRST_ID +
-						   std::rand() / ((RAND_MAX + 1u) / COLOR_LAST_ID));
-		}
 		delete currentPiece;
-	} else {
-		nextColor = Color::get(COLOR_BLUE);
 	}
 
 	currentPiece =
 		new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
 	currentPiece->setPosition(4, 0);
-	currentPiece->setColor(nextColor);
 
 	movementTimer = 0;
 }
