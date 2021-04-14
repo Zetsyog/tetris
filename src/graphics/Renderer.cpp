@@ -30,8 +30,8 @@ void Renderer::draw(Texture *texture, int x, int y) {
 void Renderer::draw(Texture *texture, int x, int y, int width, int height) {
 	SDL_Rect dest;
 
-	dest.x = x;
-	dest.y = y;
+	dest.x = x + originX;
+	dest.y = y + originY;
 	SDL_QueryTexture(texture->get_gTexture(), NULL, NULL, &dest.w, &dest.h);
 	dest.w = width;
 	dest.h = height;

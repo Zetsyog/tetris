@@ -6,8 +6,8 @@
 
 using namespace std;
 
-Piece::Piece(vector<array<int, 4>> shapes, Texture *t)
-	: currentShape(0), shapes(), x(0), y(0), tmp(t) {
+Piece::Piece(vector<array<int, 4>> shapes, Color color)
+	: currentShape(0), shapes(), x(0), y(0), color(color) {
 	array<array<int, 4>, 4> tmp{};
 	for (const auto &shape : shapes) {
 		memset(tmp.data(), 0, sizeof(tmp));
@@ -26,8 +26,8 @@ void Piece::render(Renderer &renderer) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (shapes[currentShape][i][j] == 1) {
-				renderer.draw(tmp, (x + i) * TILE_SIZE, (y + j) * TILE_SIZE,
-							  TILE_SIZE, TILE_SIZE);
+				renderer.draw(color.getTexture(), (x + i) * TILE_SIZE,
+							  (y + j) * TILE_SIZE, TILE_SIZE, TILE_SIZE);
 			}
 		}
 	}
@@ -108,4 +108,12 @@ void Piece::print() {
 		}
 		cout << endl;
 	}
+}
+
+void Piece::setColor(Color color) {
+	this->color = color;
+}
+
+Color Piece::getColor() {
+	return color;
 }
