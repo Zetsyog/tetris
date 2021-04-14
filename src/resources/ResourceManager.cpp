@@ -8,12 +8,18 @@ using namespace std;
 
 ResourceManager::ResourceManager(App *app) : app(app) {
 	registerTextures();
+	registerSounds();
+}
+
+void ResourceManager::registerSounds() {
 }
 
 void ResourceManager::registerTextures() {
 	Renderer &r = app->getRenderer();
 
 	add("texture:background", new Texture(r, "assets/texture/background.png"));
+	add("texture:grid", new Texture(r, "assets/texture/grid.png"));
+	add("texture:logo", new Texture(r, "assets/texture/logo.png"));
 
 	add("texture:block:blue", new Texture(r, "assets/texture/block/blue.png"));
 	add("texture:block:cyan", new Texture(r, "assets/texture/block/cyan.png"));

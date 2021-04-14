@@ -40,7 +40,7 @@ class Game : public Drawable {
 	/** If the game is runnning or paused */
 	bool running;
 
-	Texture *background;
+	Texture *background, *grid;
 
 	/** Copy current piece shape to the game board */
 	void copyPieceToBoard(Piece &piece);
@@ -85,6 +85,9 @@ class Game : public Drawable {
 
 	/** Set tetromino falling speed	 */
 	void setSpeed(double speed);
+
+	/** Get tetromino falling speed	 */
+	double getSpeed() const;
 
 	/**
 	 * Check if the given piece is at a valid location

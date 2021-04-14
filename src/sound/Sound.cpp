@@ -1,4 +1,4 @@
-#include "sound/Sound.hpp"
+#include "resources/Sound.hpp"
 
 
 bool Sound::init() {
@@ -6,23 +6,24 @@ bool Sound::init() {
         return true;
     //initialize SDL mixer
     else {
-    int audio_rate = 44100;
-    Uint16 audio_format = AUDIO_S16SYS;
-    int audio_channels = 2;
-    int audio_buffers = 4096;
+        int audio_rate = 44100;
+        Uint16 audio_format = AUDIO_S16SYS;
+        int audio_channels = 2;
+        int audio_buffers = 4096;
 
-    if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
-        std::cerr << "Error while initializing SDL" << std::endl;
-        exit(1);
-    }
+        if (Mix_OpenAudio(audio_rate, audio_format, audio_channels, audio_buffers) != 0) {
+            std::cerr << "Error while initializing SDL" << std::endl;
+            exit(1);
+        }
 
-    std::string path = "assets/sound/tetris_sound.wav";
-    snd=Mix_LoadWAV(path.c_str());
+        std::string path = "assets/sound/tetris_sound.wav";
+        snd=Mix_LoadWAV(path.c_str());
 
-    isInit = true;
-    std::cout << "Sounds loaded successfully" << std::endl;
+        isInit = true;
+        std::cout << "Sounds loaded successfully" << std::endl;
+        return true;
     }  
-    return true;
+    
 }
 
 void Sound::play(int i, bool looped ){

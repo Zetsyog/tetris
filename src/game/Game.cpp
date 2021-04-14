@@ -1,5 +1,6 @@
 #include "game/Game.hpp"
 #include "App.hpp"
+#include <SDL2/SDL.h>
 #include <ctime>
 
 Game::Game(App &app)
@@ -29,6 +30,7 @@ Game::Game(App &app)
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 8, 12}, {4, 5, 6, 7}}, Color::get(COLOR_BLUE)));
 
+	grid	   = app.getResourceManager().get("texture:grid");
 	background = app.getResourceManager().get("texture:background");
 }
 
@@ -51,14 +53,16 @@ void Game::update(double delta) {
 		movementTimer += delta;
 
 		if (movementTimer >= 1 / speed) {
-			movementTimer -= 1 / speed;
+			movementTimer -= (1 / speed);
 			action(ACTION_MOVE_DOWN);
 		}
 	}
 }
 
 void Game::render(Renderer &renderer) {
-	renderer.draw(background, 0, 0, TILE_SIZE * BOARD_WIDTH,
+	renderer.drawTiled(background, 0, 0, TILE_SIZE * BOARD_WIDTH,
+					   TILE_SIZE * BOARD_HEIGHT);
+	renderer.draw(grid, 0, 0, TILE_SIZE * BOARD_WIDTH,
 				  TILE_SIZE * BOARD_HEIGHT);
 
 	if (currentPiece != nullptr) {
@@ -118,6 +122,8 @@ void Game::nextPiece() {
 		new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
 	currentPiece->setPosition(4, 0);
 	currentPiece->setColor(nextColor);
+
+	movementTimer = 0;
 }
 
 void Game::copyPieceToBoard(Piece &piece) {
@@ -188,7 +194,7 @@ bool Game::isValid(Piece &piece) {
 				x = piece.getX() + i;
 				y = piece.getY() + j;
 				if (x < 0 || x >= BOARD_WIDTH || y < 0 || y >= BOARD_HEIGHT ||
-					board[x][y] == 1) {
+					board[x][y] != 0) {
 					return false;
 				}
 			}
@@ -199,8 +205,12 @@ bool Game::isValid(Piece &piece) {
 }
 
 void Game::setSpeed(double speed) {
+	movementTimer = (movementTimer * (1 / speed)) / (1 / this->speed);
 	this->speed	  = speed;
-	movementTimer = movementTimer / (1 / speed);
+}
+
+double Game::getSpeed() const {
+	return speed;
 }
 
 int Game::getWidth() {

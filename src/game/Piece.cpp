@@ -7,7 +7,7 @@
 using namespace std;
 
 Piece::Piece(vector<array<int, 4>> shapes, Color color)
-	: currentShape(0), shapes(), x(0), y(0), color(color) {
+	: currentShape(0), shapes(), x(0), y(0), width(0), height(0), color(color) {
 	array<array<int, 4>, 4> tmp{};
 	for (const auto &shape : shapes) {
 		memset(tmp.data(), 0, sizeof(tmp));

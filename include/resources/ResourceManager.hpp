@@ -13,6 +13,7 @@ class ResourceManager {
 	std::unordered_map<std::string, Texture *> textures;
 
 	void registerTextures();
+	void registerSounds();
 
   public:
 	ResourceManager(App *app);

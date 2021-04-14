@@ -7,7 +7,11 @@ const int SCREEN_HEIGHT = 800;
 const char *TITLE		= "Tetris";
 } // namespace
 
-App::App() : currentScreen(nullptr), running(true), fps(1.0) {
+App *App::instance = nullptr;
+
+App::App()
+	: currentScreen(nullptr), running(true), fps(1.0),
+	  windowWidth(SCREEN_WIDTH), windowHeight(SCREEN_HEIGHT) {
 	initSDL();
 	renderer		= new Renderer(this);
 	resourceManager = new ResourceManager(this);
@@ -26,9 +30,16 @@ void App::quit() {
 void App::initSDL() {
 	int windowFlags;
 	windowFlags = 0;
+	windowFlags |= SDL_WINDOW_SHOWN;
+	windowFlags |= SDL_WINDOW_RESIZABLE;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
+		exit(1);
+	}
+
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
 		exit(1);
 	}
 
@@ -71,13 +82,30 @@ void App::loop() {
 		renderer->clear();
 
 		if (currentScreen != nullptr) {
-			currentScreen->render(delta, *renderer);
+			currentScreen->update(delta);
+			currentScreen->render(*renderer);
 		}
 
 		renderer->render();
 
 		fps.update();
 		SDL_Delay(32);
+	}
+}
+
+int App::getWindowWidth() const {
+	return windowWidth;
+}
+
+int App::getWindowHeight() const {
+	return windowHeight;
+}
+
+void App::resize(int width, int height) {
+	windowWidth	 = width;
+	windowHeight = height;
+	if (currentScreen != nullptr) {
+		currentScreen->resize(width, height);
 	}
 }
 
@@ -101,6 +129,7 @@ App::~App() {
 	delete renderer;
 	delete resourceManager;
 	SDL_DestroyWindow(window);
+	TTF_Quit();
 	SDL_Quit();
 }
 
@@ -110,4 +139,17 @@ Renderer &App::getRenderer() {
 
 ResourceManager &App::getResourceManager() {
 	return *resourceManager;
+}
+
+App *App::create() {
+	instance = new App();
+	return instance;
+}
+
+App *App::get() {
+	return instance;
+}
+
+void App::destroy() {
+	delete instance;
 }

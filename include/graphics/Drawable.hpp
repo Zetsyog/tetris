@@ -1,4 +1,4 @@
-  
+
 #ifndef DRAWABLE_H
 #define DRAWABLE_H
 
@@ -13,6 +13,7 @@ class Drawable {
 	Drawable();
 
   public:
+	virtual ~Drawable();
 	virtual void update(double delta)		   = 0;
 	virtual void render(Renderer &renderer)	   = 0;
 	virtual void resize(int width, int height) = 0;
