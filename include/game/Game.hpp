@@ -31,7 +31,7 @@ class Game : public Gui {
 	/** The game board that contains all the tetrominos blocks */
 	std::array<std::array<int, BOARD_HEIGHT>, BOARD_WIDTH> board;
 	/** The current tetromino that is falling */
-	Piece *currentPiece, *nextPiece;
+	Piece *currentPiece, *nextPiece, *ghost;
 	/** The user score */
 	int score;
 	int scoreGoal;
@@ -66,6 +66,8 @@ class Game : public Gui {
 	 * Used for debug
 	 */
 	void printBoard();
+
+	void updateGhost();
 
 	void updateScore(int lineCleared);
 

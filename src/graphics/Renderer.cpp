@@ -32,8 +32,24 @@ void Renderer::draw(Texture *texture, int x, int y, int width, int height) {
 	dest.y = y + originY;
 	dest.w = width;
 	dest.h = height;
-	SDL_SetRenderDrawColor(get_gRenderer(), 0, 0, 0, 255);
 	SDL_RenderCopy(get_gRenderer(), texture->get_gTexture(), NULL, &dest);
+}
+
+void Renderer::drawTint(Texture *texture, int x, int y, int width, int height,
+						int r, int g, int b, int alpha) {
+	SDL_Rect dest;
+
+	dest.x = x + originX;
+	dest.y = y + originY;
+	dest.w = width;
+	dest.h = height;
+	SDL_SetTextureBlendMode(texture->get_gTexture(), SDL_BLENDMODE_MOD);
+
+	SDL_SetTextureAlphaMod(texture->get_gTexture(), alpha);
+
+	SDL_RenderCopy(get_gRenderer(), texture->get_gTexture(), NULL, &dest);
+
+	SDL_SetTextureAlphaMod(texture->get_gTexture(), 255);
 }
 
 void Renderer::draw(Texture *texture, int x, int y, int width, int height,

@@ -7,7 +7,8 @@
 using namespace std;
 
 Piece::Piece(vector<array<int, 4>> shapes, Color color)
-	: currentShape(0), shapes(), x(0), y(0), width(0), height(0), color(color) {
+	: currentShape(0), shapes(), x(0), y(0), width(0), height(0), color(color),
+	  ghost(false) {
 	array<array<int, 4>, 4> tmp{};
 	for (const auto &shape : shapes) {
 		memset(tmp.data(), 0, sizeof(tmp));
@@ -27,8 +28,14 @@ void Piece::render(Renderer &renderer) {
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (shapes[currentShape][i][j] == 1) {
-				renderer.draw(color.getTexture(), i * TILE_SIZE, j * TILE_SIZE,
-							  TILE_SIZE, TILE_SIZE);
+				if (ghost) {
+					renderer.drawTint(color.getTexture(), i * TILE_SIZE,
+									  j * TILE_SIZE, TILE_SIZE, TILE_SIZE, 255,
+									  255, 255, 200);
+				} else {
+					renderer.draw(color.getTexture(), i * TILE_SIZE,
+								  j * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+				}
 			}
 		}
 	}
@@ -96,6 +103,10 @@ void Piece::setX(int x) {
 
 void Piece::setY(int y) {
 	this->y = y;
+}
+
+void Piece::setGhost(bool ghost) {
+	this->ghost = ghost;
 }
 
 void Piece::setPosition(int x, int y) {

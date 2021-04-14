@@ -37,6 +37,7 @@ void Color::init(ResourceManager &rm) {
 	colors.push_back(Color(COLOR_PURPLE, rm.get("texture:block:purple")));
 	colors.push_back(Color(COLOR_RED, rm.get("texture:block:red")));
 	colors.push_back(Color(COLOR_YELLOW, rm.get("texture:block:yellow")));
+	colors.push_back(Color(COLOR_GHOST, rm.get("texture:block:ghost")));
 }
 
 bool operator==(Color const &a, Color const &b) {

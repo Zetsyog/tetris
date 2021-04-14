@@ -37,6 +37,8 @@ void ResourceManager::registerTextures() {
 	add("texture:block:red", new Texture(r, "assets/texture/block/red.png"));
 	add("texture:block:yellow",
 		new Texture(r, "assets/texture/block/yellow.png"));
+	add("texture:block:ghost",
+		new Texture(r, "assets/texture/block/ghost.png"));
 
 	Color::init(*this);
 }

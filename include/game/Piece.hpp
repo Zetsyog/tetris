@@ -32,6 +32,8 @@ class Piece : public Drawable {
 	/** Height of current shape */
 	int height;
 
+	bool ghost;
+
 	Color color;
 
 	/** Calculate current shape width and height */
@@ -75,6 +77,8 @@ class Piece : public Drawable {
 	void setX(int x);
 	/** Set y position */
 	void setY(int y);
+
+	void setGhost(bool ghost);
 
 	/** Set position */
 	void setPosition(int x, int y);

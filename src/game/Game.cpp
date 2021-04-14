@@ -82,6 +82,9 @@ void Game::render(Renderer &renderer) {
 	renderer.draw(grid, 0, 0, TILE_SIZE * BOARD_WIDTH,
 				  TILE_SIZE * BOARD_HEIGHT);
 
+	if (ghost != nullptr) {
+		ghost->render(renderer);
+	}
 	if (currentPiece != nullptr) {
 		currentPiece->render(renderer);
 	}
@@ -181,6 +184,7 @@ void Game::genNextPiece() {
 		return;
 	if (currentPiece != nullptr) {
 		delete currentPiece;
+		delete ghost;
 	}
 
 	if (nextPiece == nullptr) {
@@ -190,6 +194,10 @@ void Game::genNextPiece() {
 
 	currentPiece = nextPiece;
 	currentPiece->setPosition(4, 0);
+	ghost = new Piece(*currentPiece);
+	ghost->setGhost(true);
+	ghost->setColor(Color::get(COLOR_GHOST));
+
 	nextPiece = new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
 	nextPiece->setPosition(0, 0);
 
@@ -197,7 +205,9 @@ void Game::genNextPiece() {
 
 	if (!isValid(*currentPiece)) {
 		finished = true;
+		return;
 	}
+	updateGhost();
 }
 
 void Game::copyPieceToBoard(Piece &piece) {
@@ -216,12 +226,18 @@ void Game::copyPieceToBoard(Piece &piece) {
 void Game::action(int type) {
 	if (type == ACTION_MOVE_LEFT) {
 		currentPiece->setX(currentPiece->getX() - 1);
-		if (!isValid(*currentPiece))
+		if (!isValid(*currentPiece)) {
 			currentPiece->setX(currentPiece->getX() + 1);
+		}
+		ghost->setX(currentPiece->getX());
+		updateGhost();
 	} else if (type == ACTION_MOVE_RIGHT) {
 		currentPiece->setX(currentPiece->getX() + 1);
-		if (!isValid(*currentPiece))
+		if (!isValid(*currentPiece)) {
 			currentPiece->setX(currentPiece->getX() - 1);
+		}
+		ghost->setX(currentPiece->getX());
+		updateGhost();
 	} else if (type == ACTION_MOVE_DOWN) {
 		if (!canGoDown(*currentPiece)) {
 			copyPieceToBoard(*currentPiece);
@@ -232,8 +248,12 @@ void Game::action(int type) {
 		}
 	} else if (type == ACTION_ROTATE) {
 		currentPiece->rotate();
-		if (!isValid(*currentPiece))
+		ghost->rotate();
+		if (!isValid(*currentPiece)) {
 			currentPiece->invRotate();
+			ghost->invRotate();
+		}
+		updateGhost();
 	}
 }
 
@@ -317,6 +337,15 @@ void Game::printBoard() {
 	}
 }
 
+void Game::updateGhost() {
+	if (finished)
+		return;
+	ghost->setY(BOARD_HEIGHT);
+	while (!isValid(*ghost)) {
+		ghost->setY(ghost->getY() - 1);
+	}
+}
+
 Game::~Game() {
 	delete nextPieceGlyph;
 	delete scoreGlyph;
@@ -330,5 +359,8 @@ Game::~Game() {
 	}
 	if (nextPiece != nullptr) {
 		delete nextPiece;
+	}
+	if (ghost != nullptr) {
+		delete ghost;
 	}
 }

@@ -37,6 +37,8 @@ class Renderer {
 	void draw(Texture *texture, int x, int y, int width, int height);
 	void draw(Texture *texture, int x, int y, int width, int height, int srcX,
 			  int srcY, int srcWidth, int srcHeight);
+	void drawTint(Texture *texture, int x, int y, int width, int height, int r,
+				  int g, int b, int alpha);
 
 	void drawRect(int x, int y, int width, int height);
 	void drawRect(int x, int y, int width, int height, int r, int g, int b,
