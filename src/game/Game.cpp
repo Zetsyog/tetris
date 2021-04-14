@@ -4,8 +4,9 @@
 #include <ctime>
 
 Game::Game(App &app)
-	: pieceAvailable(), board(), score(0), speed(DEFAULT_SPEED),
-	  movementTimer(0), running(false), currentPiece(nullptr), app(app) {
+	: pieceAvailable(), board(), score(0), timePerBlock(DEFAULT_SPEED),
+	  movementTimer(0), running(false), currentPiece(nullptr), app(app),
+	  nextPiece(nullptr), level(1), scoreGoal(500), finished(false) {
 	std::srand(std::time(nullptr));
 	// I piece
 	pieceAvailable.push_back(
@@ -37,11 +38,19 @@ Game::Game(App &app)
 				  Color::get(COLOR_RED)));
 
 	grid	   = app.getResourceManager().get("texture:grid");
-	background = app.getResourceManager().get("texture:background");
+	background = app.getResourceManager().get("texture:ui:panel:2");
+	panel	   = app.getResourceManager().get("texture:ui:panel:3");
+	title	   = app.getResourceManager().get("texture:ui:title:2");
+
+	nextPieceGlyph = new FontGlyph("Next");
+	scoreGlyph =
+		new FontGlyph(std::string("Score: ").append(std::to_string(score)));
+	levelGlyph =
+		new FontGlyph(std::string("Level: ").append(std::to_string(level)));
 }
 
 void Game::start() {
-	nextPiece();
+	genNextPiece();
 
 	resume();
 }
@@ -55,19 +64,21 @@ void Game::resume() {
 }
 
 void Game::update(double delta) {
-	if (running) {
+	if (running && !finished) {
 		movementTimer += delta;
 
-		if (movementTimer >= 1 / speed) {
-			movementTimer -= (1 / speed);
+		if (movementTimer >= timePerBlock) {
+			movementTimer -= timePerBlock;
 			action(ACTION_MOVE_DOWN);
 		}
 	}
 }
 
 void Game::render(Renderer &renderer) {
-	renderer.drawTiled(background, 0, 0, TILE_SIZE * BOARD_WIDTH,
-					   TILE_SIZE * BOARD_HEIGHT);
+	renderer.pushOrigin(x, y);
+	renderer.draw(background, 0, 0, getWidth(), getHeight());
+
+	renderer.pushOrigin(MARGIN, MARGIN);
 	renderer.draw(grid, 0, 0, TILE_SIZE * BOARD_WIDTH,
 				  TILE_SIZE * BOARD_HEIGHT);
 
@@ -84,12 +95,42 @@ void Game::render(Renderer &renderer) {
 			}
 		}
 	}
+	renderer.popOrigin();
+
+	renderer.pushOrigin(TILE_SIZE * BOARD_WIDTH + MARGIN, MARGIN);
+	renderNextPiece(renderer);
+	renderer.popOrigin();
+
+	renderer.pushOrigin(TILE_SIZE * BOARD_WIDTH + MARGIN, MARGIN + 400);
+	renderScore(renderer);
+	renderer.popOrigin();
+
+	renderer.popOrigin();
 }
 
-void Game::resize(int width, int height) {
+void Game::renderNextPiece(Renderer &renderer) {
+	renderer.draw(panel, MARGIN, 0, 250, 250);
+	renderer.pushOrigin(MARGIN + 250 / 2, 250 / 2);
+
+	renderer.draw(title, -200 / 2, 140, 200, 50);
+	renderer.drawText(nextPieceGlyph, -nextPieceGlyph->getWidth() / 2, 150);
+	renderer.drawRect(0, 0, 0, 0, 0, 0, 0, 0);
+
+	renderer.pushOrigin(-nextPiece->getWidth() * TILE_SIZE / 2,
+						-nextPiece->getHeight() * TILE_SIZE / 2);
+	nextPiece->render(renderer);
+	renderer.popOrigin();
+	renderer.popOrigin();
+}
+
+void Game::renderScore(Renderer &renderer) {
+	renderer.drawText(scoreGlyph, MARGIN, 0);
+	renderer.drawText(levelGlyph, MARGIN, 100);
+	renderer.drawRect(0, 0, 0, 0, 0, 0, 0, 0);
 }
 
 void Game::checkLine() {
+	int lineCleared	 = 0;
 	int lineComplete = 0;
 	for (int y = 0; y < BOARD_HEIGHT; y++) {
 		lineComplete = 1;
@@ -106,19 +147,57 @@ void Game::checkLine() {
 					board[x][i] = board[x][i - 1];
 				}
 			}
+			lineCleared++;
 		}
 	}
+
+	updateScore(lineCleared);
 }
-void Game::nextPiece() {
+
+void Game::updateScore(int lineCleared) {
+	if (lineCleared == 1) {
+		score += 100 * level;
+	} else if (lineCleared == 2) {
+		score += 300 * level;
+	} else if (lineCleared == 3) {
+		score += 500 * level;
+	} else if (lineCleared == 4) {
+		score += 800 * level;
+	}
+
+	if (score >= scoreGoal) {
+		if (level < 20) {
+			level++;
+		}
+		scoreGoal += 500 * level;
+	}
+
+	scoreGlyph->setText(std::string("Score: ").append(to_string(score)));
+	levelGlyph->setText(std::string("Level: ").append(to_string(level)));
+}
+
+void Game::genNextPiece() {
+	if (finished)
+		return;
 	if (currentPiece != nullptr) {
 		delete currentPiece;
 	}
 
-	currentPiece =
-		new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
+	if (nextPiece == nullptr) {
+		nextPiece =
+			new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
+	}
+
+	currentPiece = nextPiece;
 	currentPiece->setPosition(4, 0);
+	nextPiece = new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
+	nextPiece->setPosition(0, 0);
 
 	movementTimer = 0;
+
+	if (!isValid(*currentPiece)) {
+		finished = true;
+	}
 }
 
 void Game::copyPieceToBoard(Piece &piece) {
@@ -147,7 +226,7 @@ void Game::action(int type) {
 		if (!canGoDown(*currentPiece)) {
 			copyPieceToBoard(*currentPiece);
 			checkLine();
-			nextPiece();
+			genNextPiece();
 		} else {
 			currentPiece->setY(currentPiece->getY() + 1);
 		}
@@ -159,11 +238,11 @@ void Game::action(int type) {
 }
 
 bool Game::canGoDown(Piece &piece) {
-	array<array<int, 4>, 4> shape = piece.getCurrentShape();
+	array<array<int, 4>, 4> &shape = piece.getCurrentShape();
 
 	for (int i = 0; i < 4; i++) {
 		int j = 0;
-		while (shape[i][j] == 0 && j < 4) {
+		while (j < 4 && shape[i][j] == 0) {
 			j++;
 		}
 		if (j < 4) {
@@ -199,21 +278,23 @@ bool Game::isValid(Piece &piece) {
 	return true;
 }
 
-void Game::setSpeed(double speed) {
-	movementTimer = (movementTimer * (1 / speed)) / (1 / this->speed);
-	this->speed	  = speed;
+void Game::setSoftDrop(bool active) {
+	double newTimePerBlock;
+	if (active) {
+		newTimePerBlock = std::pow((0.8 - ((20 - 1) * 0.007)), 20 - 1);
+	} else {
+		newTimePerBlock = std::pow((0.8 - ((level - 1) * 0.007)), level - 1);
+	}
+	movementTimer = (movementTimer * newTimePerBlock) * timePerBlock;
+	timePerBlock  = newTimePerBlock;
 }
 
-double Game::getSpeed() const {
-	return speed;
+int Game::getWidth() const {
+	return TILE_SIZE * BOARD_WIDTH + 2 * MARGIN + 300;
 }
 
-int Game::getWidth() {
-	return TILE_SIZE * BOARD_WIDTH;
-}
-
-int Game::getHeight() {
-	return TILE_SIZE * BOARD_HEIGHT;
+int Game::getHeight() const {
+	return TILE_SIZE * BOARD_HEIGHT + 2 * MARGIN;
 }
 
 void Game::printBoard() {
@@ -237,8 +318,17 @@ void Game::printBoard() {
 }
 
 Game::~Game() {
+	delete nextPieceGlyph;
+	delete scoreGlyph;
+	delete levelGlyph;
+
 	for (const auto &piece : pieceAvailable) {
 		delete piece;
 	}
-	delete currentPiece;
+	if (currentPiece != nullptr) {
+		delete currentPiece;
+	}
+	if (nextPiece != nullptr) {
+		delete nextPiece;
+	}
 }

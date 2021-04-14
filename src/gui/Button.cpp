@@ -3,18 +3,16 @@
 
 Button::Button(int id, std::string text, int width, int height) : id(id) {
 	this->text = text;
+	glyph	   = new FontGlyph(text);
 	setWidth(width);
 	setHeight(height);
-	App::get()->getEventManager().addListener(this);
 }
 
 void Button::render(Renderer &renderer) {
-	SDL_Rect size = renderer.getBigTextSize(text.c_str());
-	textWidth	  = size.w;
-	textHeight	  = size.h;
-	renderer.drawBigText(text.c_str(), x + width / 2 - textWidth / 2,
-						 y + height / 2 - textHeight / 2);
 	renderer.drawRect(x, y, width, height);
+
+	renderer.drawText(glyph, x + getWidth() / 2 - glyph->getWidth() / 2,
+					  y + getHeight() / 2 - glyph->getHeight() / 2);
 }
 
 Button *Button::setListener(ClickListener *listener) {
@@ -35,5 +33,5 @@ void Button::update(double delta) {
 }
 
 Button::~Button() {
-	App::get()->getEventManager().removeListener(this);
+	delete glyph;
 }

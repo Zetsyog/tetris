@@ -1,24 +1,11 @@
 #include "events/EventManager.hpp"
 #include "App.hpp"
+#include <algorithm>
 #include <iostream>
 
 using namespace std;
 
-EventManager::EventManager(App *app) : listeners(), app(app) {
-}
-
-void EventManager::addListener(EventListener *listener) {
-	listeners.push_back(listener);
-}
-
-void EventManager::removeListener(EventListener *listener) {
-	for (std::vector<EventListener *>::iterator it = listeners.begin();
-		 it != listeners.end(); ++it) {
-		if (*it == listener) {
-			listeners.erase(it);
-			break;
-		}
-	}
+EventManager::EventManager(App *app) : app(app) {
 }
 
 void EventManager::update() {
@@ -26,13 +13,9 @@ void EventManager::update() {
 
 	while (SDL_PollEvent(&event)) {
 		if (event.type == SDL_KEYDOWN) {
-			for (const auto &listener : listeners) {
-				listener->keyDown(&event.key);
-			}
+			app->getCurrentScreen().keyDown(&event.key);
 		} else if (event.type == SDL_KEYUP) {
-			for (const auto &listener : listeners) {
-				listener->keyUp(&event.key);
-			}
+			app->getCurrentScreen().keyUp(&event.key);
 		} else if (event.type == SDL_QUIT) {
 			app->quit();
 		} else if (event.type == SDL_WINDOWEVENT) {
@@ -41,13 +24,9 @@ void EventManager::update() {
 				app->resize(event.window.data1, event.window.data2);
 			}
 		} else if (event.type == SDL_MOUSEBUTTONDOWN) {
-			for (const auto &listener : listeners) {
-				listener->buttonPressed(&event.button);
-			}
+			app->getCurrentScreen().buttonPressed(&event.button);
 		} else if (event.type == SDL_MOUSEBUTTONUP) {
-			for (const auto &listener : listeners) {
-				listener->buttonReleased(&event.button);
-			}
+			app->getCurrentScreen().buttonReleased(&event.button);
 		}
 	}
 }

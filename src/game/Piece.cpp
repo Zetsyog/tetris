@@ -23,17 +23,19 @@ void Piece::update(double delta) {
 }
 
 void Piece::render(Renderer &renderer) {
+	renderer.pushOrigin(x * TILE_SIZE, y * TILE_SIZE);
 	for (int i = 0; i < 4; i++) {
 		for (int j = 0; j < 4; j++) {
 			if (shapes[currentShape][i][j] == 1) {
-				renderer.draw(color.getTexture(), (x + i) * TILE_SIZE,
-							  (y + j) * TILE_SIZE, TILE_SIZE, TILE_SIZE);
+				renderer.draw(color.getTexture(), i * TILE_SIZE, j * TILE_SIZE,
+							  TILE_SIZE, TILE_SIZE);
 			}
 		}
 	}
+	renderer.popOrigin();
 }
 
-array<array<int, 4>, 4> Piece::getCurrentShape() {
+array<array<int, 4>, 4> &Piece::getCurrentShape() {
 	return shapes[currentShape];
 }
 

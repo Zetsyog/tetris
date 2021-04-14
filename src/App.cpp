@@ -3,14 +3,14 @@
 
 namespace {
 const int SCREEN_WIDTH	= 800;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_HEIGHT = 1000;
 const char *TITLE		= "Tetris";
 } // namespace
 
 App *App::instance = nullptr;
 
 App::App()
-	: currentScreen(nullptr), running(true), fps(1.0),
+	: currentScreen(nullptr), nextScreen(nullptr), running(true), fps(1.0),
 	  windowWidth(SCREEN_WIDTH), windowHeight(SCREEN_HEIGHT) {
 	initSDL();
 	renderer		= new Renderer(this);
@@ -53,7 +53,7 @@ void App::initSDL() {
 		exit(1);
 	}
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 	int imgFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -69,23 +69,26 @@ void App::loop() {
 	running = true;
 
 	while (running) {
-		// const Uint8 *state = SDL_GetKeyboardState(NULL);
-		// keyboard(state);
-		// quit |= (state[SDL_SCANCODE_ESCAPE] != 0);
-
 		prev  = now;
 		now	  = SDL_GetPerformanceCounter();
 		delta = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
 
+		if (nextScreen != nullptr) {
+			if (currentScreen != nullptr) {
+				delete currentScreen;
+			}
+			nextScreen->init(this);
+			currentScreen = nextScreen;
+			nextScreen	  = nullptr;
+		}
+
 		eventManager->update();
 
 		renderer->clear();
-
 		if (currentScreen != nullptr) {
 			currentScreen->update(delta);
 			currentScreen->render(*renderer);
 		}
-
 		renderer->render();
 
 		fps.update();
@@ -110,11 +113,10 @@ void App::resize(int width, int height) {
 }
 
 void App::setCurrentScreen(Screen *screen) {
-	if (currentScreen != nullptr) {
-		delete currentScreen;
+	if (nextScreen != nullptr) {
+		delete nextScreen;
 	}
-	screen->init(this);
-	currentScreen = screen;
+	nextScreen = screen;
 }
 
 EventManager &App::getEventManager() {
@@ -126,10 +128,15 @@ SDL_Window *App::get_glWindow() {
 }
 
 App::~App() {
-	delete renderer;
+	delete eventManager;
+	if (currentScreen != nullptr) {
+		delete currentScreen;
+	}
 	delete resourceManager;
+	delete renderer;
 	SDL_DestroyWindow(window);
 	TTF_Quit();
+	IMG_Quit();
 	SDL_Quit();
 }
 
@@ -139,6 +146,10 @@ Renderer &App::getRenderer() {
 
 ResourceManager &App::getResourceManager() {
 	return *resourceManager;
+}
+
+Screen &App::getCurrentScreen() {
+	return *currentScreen;
 }
 
 App *App::create() {

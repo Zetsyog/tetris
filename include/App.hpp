@@ -15,7 +15,7 @@ class App {
 	static App *instance;
 
 	ResourceManager *resourceManager;
-	Screen *currentScreen;
+	Screen *currentScreen, *nextScreen;
 	Renderer *renderer;
 	EventManager *eventManager;
 	SDL_Window *window;
@@ -41,6 +41,7 @@ class App {
 	EventManager &getEventManager();
 	Renderer &getRenderer();
 	ResourceManager &getResourceManager();
+	Screen &getCurrentScreen();
 	SDL_Window *get_glWindow();
 
 	static App *create();

@@ -18,6 +18,11 @@ void ResourceManager::registerTextures() {
 	Renderer &r = app->getRenderer();
 
 	add("texture:background", new Texture(r, "assets/texture/background.png"));
+	add("texture:ui:panel:2",
+		new Texture(r, "assets/texture/ui/MainPanel02.png"));
+	add("texture:ui:panel:3", new Texture(r, "assets/texture/ui/panel.png"));
+	add("texture:ui:title:2",
+		new Texture(r, "assets/texture/ui/TitlePanel02.png"));
 	add("texture:grid", new Texture(r, "assets/texture/grid.png"));
 	add("texture:logo", new Texture(r, "assets/texture/logo.png"));
 

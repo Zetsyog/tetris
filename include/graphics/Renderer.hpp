@@ -1,6 +1,7 @@
 #ifndef RENDERER_H
 #define RENDERER_H
 
+#include "graphics/FontGlyph.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_ttf.h>
 #include <array>
@@ -41,12 +42,21 @@ class Renderer {
 	void drawRect(int x, int y, int width, int height, int r, int g, int b,
 				  int alpha);
 
+	void drawFilledRect(int x, int y, int width, int height);
+	void drawFilledRect(int x, int y, int width, int height, int r, int g,
+						int b, int alpha);
+
+	void drawFilledRect(int x, int y, int width, int height, int radius);
+	void drawFilledRect(int x, int y, int width, int height, int radius, int r,
+						int g, int b, int alpha);
+
+	void drawCircle(int x, int y, int radius, int r, int g, int b, int alpha);
+	void drawFilledCircle(int x, int y, int radius, int r, int g, int b,
+						  int alpha);
+
 	void drawTiled(Texture *texture, int x, int y, int width, int height);
 
-	SDL_Rect drawText(const char *text, int x, int y);
-	SDL_Rect drawBigText(const char *text, int x, int y);
-	SDL_Rect getTextSize(const char *text);
-	SDL_Rect getBigTextSize(const char *text);
+	void drawText(FontGlyph *glyph, int x, int y);
 };
 
 #endif

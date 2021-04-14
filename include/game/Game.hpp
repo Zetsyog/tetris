@@ -2,14 +2,15 @@
 #define GAME_H
 
 #include "game/Piece.hpp"
-#include "graphics/Drawable.hpp"
+#include "gui/Gui.hpp"
 #include <array>
 #include <vector>
 
 #define DEFAULT_SPEED 1
-#define TILE_SIZE 32
+#define TILE_SIZE 40
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 22
+#define MARGIN 40
 
 #define ACTION_MOVE_LEFT 0
 #define ACTION_MOVE_RIGHT 1
@@ -21,7 +22,7 @@ class App;
 /**
  * A class that represent the game and its logic
  */
-class Game : public Drawable {
+class Game : public Gui {
   private:
 	App &app;
 
@@ -30,17 +31,24 @@ class Game : public Drawable {
 	/** The game board that contains all the tetrominos blocks */
 	std::array<std::array<int, BOARD_HEIGHT>, BOARD_WIDTH> board;
 	/** The current tetromino that is falling */
-	Piece *currentPiece;
+	Piece *currentPiece, *nextPiece;
 	/** The user score */
 	int score;
+	int scoreGoal;
+	/** The user current level (ie difficulty) */
+	int level;
 	/** Tetromino falling speed */
-	double speed;
+	double timePerBlock;
 	/** The frequency of falling tetromino update (1 per second) */
 	double movementTimer;
 	/** If the game is runnning or paused */
 	bool running;
 
-	Texture *background, *grid;
+	bool finished;
+
+	Texture *background, *grid, *panel, *title;
+
+	FontGlyph *nextPieceGlyph, *scoreGlyph, *levelGlyph;
 
 	/** Copy current piece shape to the game board */
 	void copyPieceToBoard(Piece &piece);
@@ -52,16 +60,21 @@ class Game : public Drawable {
 	 * Delete current piece and replace it with a new random one from
 	 * availablePieces
 	 */
-	void nextPiece();
+	void genNextPiece();
 	/**
 	 * Print the board in stdout
 	 * Used for debug
 	 */
 	void printBoard();
 
+	void updateScore(int lineCleared);
+
+	void renderNextPiece(Renderer &renderer);
+	void renderScore(Renderer &renderer);
+
   public:
 	Game(App &app);
-	~Game();
+	virtual ~Game();
 	/**
 	 * Start the game
 	 */
@@ -73,7 +86,6 @@ class Game : public Drawable {
 
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
-	virtual void resize(int width, int height);
 
 	/**
 	 * Process a given action
@@ -83,11 +95,8 @@ class Game : public Drawable {
 	 */
 	void action(int type);
 
-	/** Set tetromino falling speed	 */
-	void setSpeed(double speed);
-
-	/** Get tetromino falling speed	 */
-	double getSpeed() const;
+	/** Set tetromino droping	 */
+	void setSoftDrop(bool active);
 
 	/**
 	 * Check if the given piece is at a valid location
@@ -96,15 +105,19 @@ class Game : public Drawable {
 	 */
 	bool isValid(Piece &piece);
 
+	bool isDone();
+
+	int getScore();
+
 	/**
 	 * @return board width in pixels
 	 */
-	int getWidth();
+	virtual int getWidth() const;
 
 	/**
 	 * @return board height in pixels
 	 */
-	int getHeight();
+	virtual int getHeight() const;
 };
 
 #endif

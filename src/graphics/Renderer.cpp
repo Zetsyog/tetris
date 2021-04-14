@@ -14,6 +14,7 @@ Renderer::Renderer(App *app)
 
 	font24 = TTF_OpenFont(FONT_PATH, 24);
 	font48 = TTF_OpenFont(FONT_PATH, 48);
+	FontGlyph::setDefaultFonts(font24, font48);
 }
 
 SDL_Renderer *Renderer::get_gRenderer() {
@@ -31,6 +32,7 @@ void Renderer::draw(Texture *texture, int x, int y, int width, int height) {
 	dest.y = y + originY;
 	dest.w = width;
 	dest.h = height;
+	SDL_SetRenderDrawColor(get_gRenderer(), 0, 0, 0, 255);
 	SDL_RenderCopy(get_gRenderer(), texture->get_gTexture(), NULL, &dest);
 }
 
@@ -40,23 +42,30 @@ void Renderer::draw(Texture *texture, int x, int y, int width, int height,
 		.x = x + originX, .y = y + originY, .w = width, .h = height};
 
 	SDL_Rect src = {.x = srcX, .y = srcY, .w = srcWidth, .h = srcHeight};
+	SDL_SetRenderDrawColor(get_gRenderer(), 0, 0, 0, 255);
 
 	SDL_RenderCopy(get_gRenderer(), texture->get_gTexture(), &src, &dest);
 }
 
 void Renderer::drawTiled(Texture *texture, int x, int y, int width,
 						 int height) {
+	x += originX;
+	y += originY;
 	int intWidth  = std::ceil((double)width / (double)texture->getWidth());
 	int intHeight = std::ceil((double)height / (double)texture->getHeight());
 
 	for (int i = 0; i < intHeight; i++) {
-		int th = i == intHeight - 1 ? height % texture->getHeight()
+		int th = i == intHeight - 1 ? (height % texture->getHeight() == 0
+										   ? texture->getHeight()
+										   : height % texture->getHeight())
 									: texture->getHeight();
 		for (int j = 0; j < intWidth; j++) {
 			if (j == intWidth - 1) {
+				int tw = width % texture->getWidth() == 0
+							 ? texture->getWidth()
+							 : width % texture->getWidth();
 				draw(texture, x + j * texture->getWidth(),
-					 y + i * texture->getHeight(), width % texture->getWidth(),
-					 th, 0, 0, width % texture->getWidth(), th);
+					 y + i * texture->getHeight(), tw, th, 0, 0, tw, th);
 			} else {
 				draw(texture, x + j * texture->getWidth(),
 					 y + i * texture->getHeight(), texture->getWidth(), th, 0,
@@ -73,8 +82,8 @@ void Renderer::drawRect(int x, int y, int width, int height) {
 void Renderer::drawRect(int x, int y, int width, int height, int r, int g,
 						int b, int alpha) {
 	SDL_Rect rect;
-	rect.x = x;
-	rect.y = y;
+	rect.x = x + originX;
+	rect.y = y + originY;
 	rect.w = width;
 	rect.h = height;
 
@@ -84,74 +93,124 @@ void Renderer::drawRect(int x, int y, int width, int height, int r, int g,
 	SDL_SetRenderDrawColor(get_gRenderer(), 0, 0, 0, 255);
 }
 
-SDL_Rect Renderer::drawText(const char *text, int x, int y) {
-	SDL_Color color		 = {255, 255, 255};
-	SDL_Surface *surface = TTF_RenderText_Solid(font24, text, color);
-	SDL_Texture *texture =
-		SDL_CreateTextureFromSurface(get_gRenderer(), surface);
+void Renderer::drawFilledRect(int x, int y, int width, int height) {
+	drawFilledRect(x, y, width, height, 255, 255, 255, 255);
+}
 
+void Renderer::drawFilledRect(int x, int y, int width, int height, int r, int g,
+							  int b, int alpha) {
+	SDL_Rect rect;
+	rect.x = x + originX;
+	rect.y = y + originY;
+	rect.w = width;
+	rect.h = height;
+
+	SDL_SetRenderDrawColor(get_gRenderer(), r, g, b, alpha);
+	SDL_RenderFillRect(get_gRenderer(), &rect);
+
+	SDL_SetRenderDrawColor(get_gRenderer(), 0, 0, 0, 255);
+}
+
+void Renderer::drawFilledRect(int x, int y, int width, int height, int radius) {
+	drawFilledRect(x, y, width, height, radius, 255, 255, 255, 255);
+}
+void Renderer::drawFilledRect(int x, int y, int width, int height, int radius,
+							  int r, int g, int b, int alpha) {
+	drawFilledCircle(x + radius, y + radius, radius - 1, r, g, b, alpha);
+	drawFilledCircle(x + radius, y + height - radius, radius - 1, r, g, b,
+					 alpha);
+	drawFilledCircle(x + width - radius, y + radius, radius - 1, r, g, b,
+					 alpha);
+	drawFilledCircle(x + width - radius, y + height - radius, radius - 1, r, g,
+					 b, alpha);
+	drawFilledRect(x + radius, y, width - 2 * radius, height, r, g, b, alpha);
+	drawFilledRect(x, y + radius, width, height - 2 * radius, r, g, b, alpha);
+}
+
+void Renderer::drawCircle(int x, int y, int radius, int r, int g, int b,
+						  int alpha) {
+	int offsetx, offsety, d;
+
+	x += originX;
+	y += originY;
+
+	SDL_SetRenderDrawColor(get_gRenderer(), r, g, b, alpha);
+
+	offsetx = 0;
+	offsety = radius;
+	d		= radius - 1;
+
+	while (offsety >= offsetx) {
+
+		SDL_RenderDrawPoint(get_gRenderer(), x + offsetx, y + offsety);
+		SDL_RenderDrawPoint(get_gRenderer(), x + offsety, y + offsetx);
+		SDL_RenderDrawPoint(get_gRenderer(), x - offsetx, y + offsety);
+		SDL_RenderDrawPoint(get_gRenderer(), x - offsety, y + offsetx);
+		SDL_RenderDrawPoint(get_gRenderer(), x + offsetx, y - offsety);
+		SDL_RenderDrawPoint(get_gRenderer(), x + offsety, y - offsetx);
+		SDL_RenderDrawPoint(get_gRenderer(), x - offsetx, y - offsety);
+		SDL_RenderDrawPoint(get_gRenderer(), x - offsety, y - offsetx);
+
+		if (d >= 2 * offsetx) {
+			d -= 2 * offsetx + 1;
+			offsetx += 1;
+		} else if (d < 2 * (radius - offsety)) {
+			d += 2 * offsety - 1;
+			offsety -= 1;
+		} else {
+			d += 2 * (offsety - offsetx - 1);
+			offsety -= 1;
+			offsetx += 1;
+		}
+	}
+}
+
+void Renderer::drawFilledCircle(int x, int y, int radius, int r, int g, int b,
+								int alpha) {
+	int offsetx, offsety, d;
+
+	x += originX;
+	y += originY;
+
+	SDL_SetRenderDrawColor(get_gRenderer(), r, g, b, alpha);
+
+	offsetx = 0;
+	offsety = radius;
+	d		= radius - 1;
+
+	while (offsety >= offsetx) {
+		SDL_RenderDrawLine(get_gRenderer(), x - offsety, y + offsetx,
+						   x + offsety, y + offsetx);
+		SDL_RenderDrawLine(get_gRenderer(), x - offsetx, y + offsety,
+						   x + offsetx, y + offsety);
+		SDL_RenderDrawLine(get_gRenderer(), x - offsetx, y - offsety,
+						   x + offsetx, y - offsety);
+		SDL_RenderDrawLine(get_gRenderer(), x - offsety, y - offsetx,
+						   x + offsety, y - offsetx);
+
+		if (d >= 2 * offsetx) {
+			d -= 2 * offsetx + 1;
+			offsetx += 1;
+		} else if (d < 2 * (radius - offsety)) {
+			d += 2 * offsety - 1;
+			offsety -= 1;
+		} else {
+			d += 2 * (offsety - offsetx - 1);
+			offsety -= 1;
+			offsetx += 1;
+		}
+	}
+}
+
+void Renderer::drawText(FontGlyph *glyph, int x, int y) {
 	SDL_Rect dest;
 
 	dest.x = x + originX;
 	dest.y = y + originY;
-	SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-	SDL_RenderCopy(get_gRenderer(), texture, NULL, &dest);
+	dest.w = glyph->getWidth();
+	dest.h = glyph->getHeight();
 
-	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);
-	return dest;
-}
-
-SDL_Rect Renderer::getTextSize(const char *text) {
-	SDL_Color color		 = {255, 255, 255};
-	SDL_Surface *surface = TTF_RenderText_Solid(font24, text, color);
-	SDL_Texture *texture =
-		SDL_CreateTextureFromSurface(get_gRenderer(), surface);
-
-	SDL_Rect dest;
-
-	dest.x = 0;
-	dest.y = 0;
-	SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-
-	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);
-	return dest;
-}
-
-SDL_Rect Renderer::drawBigText(const char *text, int x, int y) {
-	SDL_Color color		 = {255, 255, 255};
-	SDL_Surface *surface = TTF_RenderText_Solid(font48, text, color);
-	SDL_Texture *texture =
-		SDL_CreateTextureFromSurface(get_gRenderer(), surface);
-
-	SDL_Rect dest;
-
-	dest.x = x + originX;
-	dest.y = y + originY;
-	SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-	SDL_RenderCopy(get_gRenderer(), texture, NULL, &dest);
-
-	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);
-	return dest;
-}
-
-SDL_Rect Renderer::getBigTextSize(const char *text) {
-	SDL_Color color		 = {255, 255, 255};
-	SDL_Surface *surface = TTF_RenderText_Solid(font48, text, color);
-	SDL_Texture *texture =
-		SDL_CreateTextureFromSurface(get_gRenderer(), surface);
-
-	SDL_Rect dest;
-
-	dest.x = 0;
-	dest.y = 0;
-	SDL_QueryTexture(texture, NULL, NULL, &dest.w, &dest.h);
-
-	SDL_DestroyTexture(texture);
-	SDL_FreeSurface(surface);
-	return dest;
+	SDL_RenderCopy(get_gRenderer(), glyph->get_gTexture(), NULL, &dest);
 }
 
 void Renderer::pushOrigin(int x, int y) {

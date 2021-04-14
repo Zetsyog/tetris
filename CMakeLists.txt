@@ -23,11 +23,13 @@ set (SOURCES src/main.cpp
           src/gui/Label.cpp
           src/gui/GameScreen.cpp
           src/gui/MainMenuScreen.cpp
+          src/gui/GameOverScreen.cpp
           src/util/FPSCounter.cpp
           src/graphics/Renderer.cpp
           src/graphics/Drawable.cpp
           src/graphics/Texture.cpp
           src/graphics/Color.cpp
+          src/graphics/FontGlyph.cpp
           src/resources/ResourceManager.cpp
           )
 

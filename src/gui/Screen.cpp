@@ -29,7 +29,7 @@ void Screen::resize(int width, int height) {
 	}
 }
 
-Drawable *Screen::add(Drawable *child) {
+Gui *Screen::add(Gui *child) {
 	child->resize(app->getWindowWidth(), app->getWindowHeight());
 	children.push_back(child);
 	return child;
@@ -38,5 +38,29 @@ Drawable *Screen::add(Drawable *child) {
 Screen::~Screen() {
 	for (const auto &child : children) {
 		delete (child);
+	}
+}
+
+void Screen::keyUp(SDL_KeyboardEvent *event) {
+	for (const auto &child : children) {
+		child->keyUp(event);
+	}
+}
+
+void Screen::keyDown(SDL_KeyboardEvent *event) {
+	for (const auto &child : children) {
+		child->keyDown(event);
+	}
+}
+
+void Screen::buttonPressed(SDL_MouseButtonEvent *event) {
+	for (const auto &child : children) {
+		child->buttonPressed(event);
+	}
+}
+
+void Screen::buttonReleased(SDL_MouseButtonEvent *event) {
+	for (const auto &child : children) {
+		child->buttonReleased(event);
 	}
 }

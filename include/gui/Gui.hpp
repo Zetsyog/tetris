@@ -1,11 +1,12 @@
 #ifndef LAYOUT_H
 #define LAYOUT_H
 
+#include "events/EventListener.hpp"
 #include "graphics/Drawable.hpp"
 
 enum PosSystem { Absolute, Relative };
 
-class Gui : public Drawable {
+class Gui : public Drawable, public EventListener {
   protected:
 	int x, y, width, height;
 	int _offsetX, _offsetY;

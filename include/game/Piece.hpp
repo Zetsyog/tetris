@@ -57,7 +57,7 @@ class Piece : public Drawable {
 	virtual void resize(int width, int height);
 
 	/** Return current shape */
-	array<array<int, 4>, 4> getCurrentShape();
+	array<array<int, 4>, 4> &getCurrentShape();
 
 	/**
 	 * @brief Rotate this tetromino
