@@ -10,10 +10,13 @@ class Texture {
 	Texture(Renderer &renderer, std::string path);
 	~Texture();
 	SDL_Texture *get_gTexture();
+	int getWidth() const;
+	int getHeight() const;
 
   private:
 	std::string path;
 	SDL_Texture *gTexture;
+	int width, height;
 };
 
 #endif

@@ -16,9 +16,19 @@ Texture::Texture(Renderer &renderer, std::string path) : path(path) {
 				   path.c_str(), SDL_GetError());
 		}
 
+		SDL_QueryTexture(gTexture, NULL, NULL, &width, &height);
+
 		// Get rid of old loaded surface
 		SDL_FreeSurface(loadedSurface);
 	}
+}
+
+int Texture::getWidth() const {
+	return width;
+}
+
+int Texture::getHeight() const {
+	return height;
 }
 
 Texture::~Texture() {

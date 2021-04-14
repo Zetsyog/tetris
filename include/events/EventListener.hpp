@@ -5,8 +5,10 @@
 
 class EventListener {
   public:
-	virtual void keyUp(SDL_KeyboardEvent *event)   = 0;
-	virtual void keyDown(SDL_KeyboardEvent *event) = 0;
+	virtual void keyUp(SDL_KeyboardEvent *event);
+	virtual void keyDown(SDL_KeyboardEvent *event);
+	virtual void buttonPressed(SDL_MouseButtonEvent *event);
+	virtual void buttonReleased(SDL_MouseButtonEvent *event);
 };
 
 #endif

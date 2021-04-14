@@ -11,8 +11,6 @@ class EventManager {
   private:
 	App *app;
 	std::vector<EventListener *> listeners;
-	void keyUp(SDL_KeyboardEvent *event);
-	void keyDown(SDL_KeyboardEvent *event);
 
   public:
 	EventManager(App *app);
