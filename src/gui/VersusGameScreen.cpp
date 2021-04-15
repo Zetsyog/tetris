@@ -12,9 +12,13 @@ void VersusGameScreen::init(App *app) {
 	aiGame->start();
 	add(game->center()->offsetX(-360));
 	add(aiGame->center()->offsetX(360));
+
+	music = app->getResourceManager().getMusic("music:main");
+	music->play();
 }
 
 VersusGameScreen::~VersusGameScreen() {
+	music->stop();
 }
 
 void VersusGameScreen::render(Renderer &renderer) {

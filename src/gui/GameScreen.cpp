@@ -9,8 +9,12 @@ void GameScreen::init(App *app) {
 	game = new Game(*app);
 	add(game->center());
 	game->start();
+
+	music = app->getResourceManager().getMusic("music:main");
+	music->play();
 }
 GameScreen::~GameScreen() {
+	music->stop();
 }
 
 void GameScreen::render(Renderer &renderer) {
