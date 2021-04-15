@@ -29,9 +29,6 @@ void Button::buttonReleased(SDL_MouseButtonEvent *event) {
 	}
 }
 
-void Button::update(double delta) {
-}
-
 Button::~Button() {
 	delete glyph;
 }

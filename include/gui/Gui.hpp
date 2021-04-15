@@ -11,6 +11,7 @@ class Gui : public Drawable, public EventListener {
 	int x, y, width, height;
 	int _offsetX, _offsetY;
 	bool _centerX, _centerY;
+	bool dirty;
 	PosSystem XPosSystem, YPosSystem;
 
   public:
@@ -18,7 +19,10 @@ class Gui : public Drawable, public EventListener {
 	Gui(int x, int y, int width, int height);
 	virtual ~Gui();
 
+	void calculateCoordinate(int width, int height);
+
 	virtual void resize(int width, int height);
+	virtual void update(double delta);
 
 	virtual int getX() const;
 	virtual int getY() const;

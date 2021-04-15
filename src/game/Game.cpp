@@ -6,7 +6,8 @@
 Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), timePerBlock(DEFAULT_SPEED),
 	  movementTimer(0), running(false), currentPiece(nullptr), app(app),
-	  nextPiece(nullptr), level(1), scoreGoal(500), finished(false) {
+	  nextPiece(nullptr), level(1), scoreGoal(500), finished(false),
+	  ghost(nullptr) {
 	std::srand(std::time(nullptr));
 	// I piece
 	pieceAvailable.push_back(
@@ -119,8 +120,8 @@ void Game::renderNextPiece(Renderer &renderer) {
 	renderer.drawText(nextPieceGlyph, -nextPieceGlyph->getWidth() / 2, 150);
 	renderer.drawRect(0, 0, 0, 0, 0, 0, 0, 0);
 
-	renderer.pushOrigin(-nextPiece->getWidth() * TILE_SIZE / 2,
-						-nextPiece->getHeight() * TILE_SIZE / 2);
+	renderer.pushOrigin(-(nextPiece->getWidth() * TILE_SIZE) / 2,
+						-(nextPiece->getHeight() * TILE_SIZE) / 2);
 	nextPiece->render(renderer);
 	renderer.popOrigin();
 	renderer.popOrigin();
@@ -210,14 +211,20 @@ void Game::genNextPiece() {
 	updateGhost();
 }
 
-void Game::copyPieceToBoard(Piece &piece) {
+void Game::copyPieceToBoard(
+	Piece &piece,
+	std::array<std::array<int, BOARD_HEIGHT>, BOARD_WIDTH> &board) {
 	array<array<int, 4>, 4> shape = piece.getCurrentShape();
-
 	for (int i = 0; i < 4; i++) {
+		int tmpX = piece.getX() + i;
+		if (tmpX < 0 || tmpX >= BOARD_WIDTH)
+			continue;
 		for (int j = 0; j < 4; j++) {
+			int tmpY = piece.getY() + j;
+			if (tmpY < 0 || tmpY >= BOARD_HEIGHT)
+				continue;
 			if (shape[i][j] == 1) {
-				board[piece.getX() + i][piece.getY() + j] =
-					piece.getColor().getId();
+				board[tmpX][tmpY] = piece.getColor().getId();
 			}
 		}
 	}
@@ -240,7 +247,7 @@ void Game::action(int type) {
 		updateGhost();
 	} else if (type == ACTION_MOVE_DOWN) {
 		if (!canGoDown(*currentPiece)) {
-			copyPieceToBoard(*currentPiece);
+			copyPieceToBoard(*currentPiece, board);
 			checkLine();
 			genNextPiece();
 		} else {
@@ -340,10 +347,19 @@ void Game::printBoard() {
 void Game::updateGhost() {
 	if (finished)
 		return;
-	ghost->setY(BOARD_HEIGHT);
-	while (!isValid(*ghost)) {
-		ghost->setY(ghost->getY() - 1);
+	ghost->setY(currentPiece->getY());
+	while (isValid(*ghost)) {
+		ghost->setY(ghost->getY() + 1);
 	}
+	ghost->setY(ghost->getY() - 1);
+}
+
+bool Game::isDone() {
+	return finished;
+}
+
+int Game::getScore() {
+	return score;
 }
 
 Game::~Game() {

@@ -53,6 +53,7 @@ class Piece : public Drawable {
 	 * @param shapes
 	 */
 	Piece(std::vector<array<int, 4>> shapes, Color color);
+	Piece(Piece &other);
 
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
@@ -60,6 +61,8 @@ class Piece : public Drawable {
 
 	/** Return current shape */
 	array<array<int, 4>, 4> &getCurrentShape();
+
+	int getRotationId();
 
 	/**
 	 * @brief Rotate this tetromino

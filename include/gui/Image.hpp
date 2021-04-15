@@ -12,7 +12,6 @@ class Image : public Gui {
 	Image(Texture *texture);
 	Image(Texture *texture, int width, int height);
 
-	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
 };
 

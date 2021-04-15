@@ -7,7 +7,7 @@
 #include <vector>
 
 #define DEFAULT_SPEED 1
-#define TILE_SIZE 40
+#define TILE_SIZE 32
 #define BOARD_WIDTH 10
 #define BOARD_HEIGHT 22
 #define MARGIN 40
@@ -23,7 +23,7 @@ class App;
  * A class that represent the game and its logic
  */
 class Game : public Gui {
-  private:
+  protected:
 	App &app;
 
 	/** Collection of piece that are available in the game */
@@ -51,7 +51,9 @@ class Game : public Gui {
 	FontGlyph *nextPieceGlyph, *scoreGlyph, *levelGlyph;
 
 	/** Copy current piece shape to the game board */
-	void copyPieceToBoard(Piece &piece);
+	void copyPieceToBoard(
+		Piece &piece,
+		std::array<std::array<int, BOARD_HEIGHT>, BOARD_WIDTH> &board);
 	/** Check if the given piece can fall down */
 	bool canGoDown(Piece &piece);
 	/** Check if there are complete lines in game board */
@@ -60,7 +62,7 @@ class Game : public Gui {
 	 * Delete current piece and replace it with a new random one from
 	 * availablePieces
 	 */
-	void genNextPiece();
+	virtual void genNextPiece();
 	/**
 	 * Print the board in stdout
 	 * Used for debug

@@ -15,6 +15,7 @@ set (SOURCES src/main.cpp
           src/App.cpp
           src/game/Piece.cpp
           src/game/Game.cpp
+          src/game/AIGame.cpp
           src/events/EventManager.cpp
           src/gui/Screen.cpp
           src/gui/Gui.cpp
@@ -24,6 +25,7 @@ set (SOURCES src/main.cpp
           src/gui/GameScreen.cpp
           src/gui/MainMenuScreen.cpp
           src/gui/GameOverScreen.cpp
+          src/gui/VersusGameScreen.cpp
           src/util/FPSCounter.cpp
           src/graphics/Renderer.cpp
           src/graphics/Drawable.cpp

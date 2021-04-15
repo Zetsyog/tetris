@@ -20,6 +20,17 @@ Piece::Piece(vector<array<int, 4>> shapes, Color color)
 	calculateBounds();
 }
 
+Piece::Piece(Piece &other) {
+	shapes		 = other.shapes;
+	currentShape = other.currentShape;
+	x			 = other.x;
+	y			 = other.y;
+	width		 = other.width;
+	height		 = other.height;
+	ghost		 = other.ghost;
+	color		 = other.color;
+}
+
 void Piece::update(double delta) {
 }
 
@@ -44,6 +55,10 @@ void Piece::render(Renderer &renderer) {
 
 array<array<int, 4>, 4> &Piece::getCurrentShape() {
 	return shapes[currentShape];
+}
+
+int Piece::getRotationId() {
+	return currentShape;
 }
 
 void Piece::resize(int width, int height) {

@@ -5,13 +5,15 @@
 
 class Label : public Gui {
   private:
-	char *text;
+	int id;
+	std::string text;
+	FontGlyph *glyph;
 
   public:
-	Label(char *text);
+	Label(std::string text);
+	Label(std::string text, bool big);
 
 	virtual void render(Renderer &renderer);
-	virtual void update(double delta);
 };
 
 #endif

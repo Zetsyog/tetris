@@ -1,5 +1,6 @@
 #include "gui/Button.hpp"
 #include "gui/Image.hpp"
+#include "gui/Label.hpp"
 #include "gui/Screen.hpp"
 
 GameOverScreen::GameOverScreen(int score) : score(score) {
@@ -14,10 +15,15 @@ void GameOverScreen::init(App *app) {
 				   694 / 2))
 			->centerX());
 
+	add(new Label("Game over", true))->center();
+	add(new Label(std::string("Score : ").append(to_string(score))))
+		->center()
+		->offsetY(200);
+
 	add((new Button(0, "Return to menu", 300, 100))
 			->setListener(this)
 			->center()
-			->offsetY(200));
+			->offsetY(400));
 
 	background = app->getResourceManager().get("texture:background");
 }

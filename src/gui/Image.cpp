@@ -10,9 +10,6 @@ Image::Image(Texture *texture, int width, int height) : texture(texture) {
 	setHeight(height);
 }
 
-void Image::update(double delta) {
-}
-
 void Image::render(Renderer &renderer) {
 	renderer.draw(texture, getX(), getY(), getWidth(), getHeight());
 }

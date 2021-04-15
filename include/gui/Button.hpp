@@ -28,7 +28,6 @@ class Button : public Gui {
 	virtual void buttonReleased(SDL_MouseButtonEvent *event);
 
 	virtual void render(Renderer &renderer);
-	virtual void update(double delta);
 };
 
 #endif

@@ -2,6 +2,7 @@
 #define SCREEN_H
 
 #include "events/EventListener.hpp"
+#include "game/AIGame.hpp"
 #include "game/Game.hpp"
 #include "graphics/Drawable.hpp"
 #include "graphics/Renderer.hpp"
@@ -40,6 +41,21 @@ class GameScreen : public Screen {
 
   public:
 	virtual ~GameScreen();
+	virtual void init(App *app);
+	virtual void keyUp(SDL_KeyboardEvent *event);
+	virtual void update(double delta);
+	virtual void render(Renderer &renderer);
+	virtual void keyDown(SDL_KeyboardEvent *event);
+};
+
+class VersusGameScreen : public Screen {
+  private:
+	Game *game;
+	AIGame *aiGame;
+	Texture *background;
+
+  public:
+	virtual ~VersusGameScreen();
 	virtual void init(App *app);
 	virtual void keyUp(SDL_KeyboardEvent *event);
 	virtual void update(double delta);

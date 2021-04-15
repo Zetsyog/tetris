@@ -2,25 +2,28 @@
 
 static bool down = false;
 
-void GameScreen::init(App *app) {
+void VersusGameScreen::init(App *app) {
 	Screen::init(app);
 	background = app->getResourceManager().get("texture:background");
 
-	game = new Game(*app);
-	add(game->center());
+	game   = new Game(*app);
+	aiGame = new AIGame(*app);
 	game->start();
+	aiGame->start();
+	add(game->center()->offsetX(-400));
+	add(aiGame->center()->offsetX(400));
 }
 
-GameScreen::~GameScreen() {
+VersusGameScreen::~VersusGameScreen() {
 }
 
-void GameScreen::render(Renderer &renderer) {
+void VersusGameScreen::render(Renderer &renderer) {
 	renderer.drawTiled(background, 0, 0, app->getWindowWidth(),
 					   app->getWindowHeight());
 	Screen::render(renderer);
 }
 
-void GameScreen::update(double delta) {
+void VersusGameScreen::update(double delta) {
 	SDL_PumpEvents();
 	const Uint8 *state = SDL_GetKeyboardState(NULL);
 	if (state[SDL_SCANCODE_DOWN] && !down) {
@@ -37,7 +40,7 @@ void GameScreen::update(double delta) {
 	}
 }
 
-void GameScreen::keyUp(SDL_KeyboardEvent *event) {
+void VersusGameScreen::keyUp(SDL_KeyboardEvent *event) {
 	switch (event->keysym.scancode) {
 	case SDL_SCANCODE_LEFT:
 		game->action(ACTION_MOVE_LEFT);
@@ -54,5 +57,5 @@ void GameScreen::keyUp(SDL_KeyboardEvent *event) {
 	}
 }
 
-void GameScreen::keyDown(SDL_KeyboardEvent *event) {
+void VersusGameScreen::keyDown(SDL_KeyboardEvent *event) {
 }
