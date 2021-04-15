@@ -1,4 +1,5 @@
 #include "App.hpp"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 
 namespace {
@@ -40,6 +41,19 @@ void App::initSDL() {
 
 	if (TTF_Init() == -1) {
 		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(1);
+	}
+
+	int flags	= MIX_INIT_OGG | MIX_INIT_MOD;
+	int initted = Mix_Init(flags);
+	if (initted & flags != flags) {
+		printf("Mix_Init: Failed to init required ogg and mod support!\n");
+		printf("Mix_Init: %s\n", Mix_GetError());
+		// handle error
+	}
+
+	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+		std::cerr << "Error while initializing SDL" << std::endl;
 		exit(1);
 	}
 
@@ -130,6 +144,7 @@ App::~App() {
 	delete resourceManager;
 	SDL_DestroyWindow(window);
 	TTF_Quit();
+	Mix_CloseAudio();
 	SDL_Quit();
 }
 

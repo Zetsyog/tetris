@@ -29,6 +29,7 @@ set (SOURCES src/main.cpp
           src/graphics/Texture.cpp
           src/graphics/Color.cpp
           src/resources/ResourceManager.cpp
+          src/resources/Music.cpp
           )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

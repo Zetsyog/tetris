@@ -8,10 +8,14 @@ void GameScreen::init(App *app) {
 	game = new Game(*app);
 	add(game);
 	game->start();
+
+	music = app->getResourceManager().getMusic("music:main");
+	music->play();
 }
 
 GameScreen::~GameScreen() {
 	app->getEventManager().removeListener(this);
+	music->stop();
 	delete game;
 }
 

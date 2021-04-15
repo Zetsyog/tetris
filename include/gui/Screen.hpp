@@ -6,6 +6,7 @@
 #include "graphics/Drawable.hpp"
 #include "graphics/Renderer.hpp"
 #include "gui/Button.hpp"
+#include "resources/Music.hpp"
 #include <vector>
 
 class App;
@@ -31,6 +32,7 @@ class Screen : public Drawable {
 class GameScreen : public Screen, public EventListener {
   private:
 	Game *game;
+	Music *music;
 
   public:
 	virtual ~GameScreen();
