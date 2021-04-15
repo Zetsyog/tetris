@@ -52,6 +52,9 @@ class Game : public Gui {
 
 	FontGlyph *nextPieceGlyph, *scoreGlyph, *levelGlyph;
 
+	int nextPieceIndex;
+	unsigned int seed;
+
 	/** Copy current piece shape to the game board */
 	void copyPieceToBoard(
 		Piece &piece,

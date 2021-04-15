@@ -1,19 +1,22 @@
 #include "game/Game.hpp"
 #include "App.hpp"
 #include <SDL2/SDL.h>
+#include <algorithm>
+#include <array>
+#include <chrono>
 #include <ctime>
+#include <random>
 
 Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), timePerBlock(DEFAULT_SPEED),
 	  movementTimer(0), running(false), currentPiece(nullptr), app(app),
 	  nextPiece(nullptr), level(1), scoreGoal(500), finished(false),
-	  ghost(nullptr), lineFilled(0) {
+	  ghost(nullptr), lineFilled(0), nextPieceIndex(0) {
 	std::srand(std::time(nullptr));
 	// I piece
 	pieceAvailable.push_back(
 		new Piece({{4, 5, 6, 7}, {2, 6, 10, 14}, {8, 9, 10, 11}, {1, 5, 9, 13}},
 				  Color::get(COLOR_CYAN)));
-
 	// J piece
 	pieceAvailable.push_back(
 		new Piece({{0, 4, 5, 6}, {1, 2, 5, 9}, {4, 5, 6, 10}, {1, 5, 8, 9}},
@@ -37,6 +40,8 @@ Game::Game(App &app)
 	pieceAvailable.push_back(
 		new Piece({{0, 1, 5, 6}, {2, 5, 6, 9}, {4, 5, 9, 10}, {1, 4, 5, 8}},
 				  Color::get(COLOR_RED)));
+
+	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 	grid	   = app.getResourceManager().get("texture:grid");
 	background = app.getResourceManager().get("texture:ui:panel:2");
@@ -193,8 +198,10 @@ void Game::genNextPiece() {
 	}
 
 	if (nextPiece == nullptr) {
-		nextPiece =
-			new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
+		std::shuffle(pieceAvailable.begin(), pieceAvailable.end(),
+					 std::default_random_engine(seed));
+		nextPiece = new Piece(*pieceAvailable[nextPieceIndex]);
+		nextPieceIndex++;
 	}
 
 	currentPiece = nextPiece;
@@ -203,8 +210,14 @@ void Game::genNextPiece() {
 	ghost->setGhost(true);
 	ghost->setColor(Color::get(COLOR_GHOST));
 
-	nextPiece = new Piece(*pieceAvailable[std::rand() / ((RAND_MAX + 1u) / 7)]);
+	if (nextPieceIndex >= 7) {
+		nextPieceIndex = 0;
+		std::shuffle(pieceAvailable.begin(), pieceAvailable.end(),
+					 std::default_random_engine(seed));
+	}
+	nextPiece = new Piece(*pieceAvailable[nextPieceIndex]);
 	nextPiece->setPosition(0, 0);
+	nextPieceIndex++;
 
 	movementTimer = 0;
 
