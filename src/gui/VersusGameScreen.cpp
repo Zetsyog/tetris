@@ -42,7 +42,7 @@ void VersusGameScreen::update(double delta) {
 	}
 	Screen::update(delta);
 
-	if (game->isDone()) {
+	if (game->isDone() || aiGame->isDone()) {
 		app->setCurrentScreen(new GameOverScreen(game->getScore()));
 	}
 }
