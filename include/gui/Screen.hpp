@@ -55,6 +55,7 @@ class VersusGameScreen : public Screen {
 	Game *game;
 	AIGame *aiGame;
 	Texture *background;
+	Music *music;
 
   public:
 	virtual ~VersusGameScreen();
