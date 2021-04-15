@@ -8,14 +8,18 @@
 #include "util/FPSCounter.hpp"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_image.h>
+#include <SDL2/SDL_ttf.h>
 
 class App {
   private:
+	static App *instance;
+
 	ResourceManager *resourceManager;
-	Screen *currentScreen;
+	Screen *currentScreen, *nextScreen;
 	Renderer *renderer;
 	EventManager *eventManager;
 	SDL_Window *window;
+	int windowWidth, windowHeight;
 	bool running;
 	FPSCounter fps;
 
@@ -29,10 +33,20 @@ class App {
 	int start();
 	void quit();
 	void setCurrentScreen(Screen *screen);
+	void resize(int width, int height);
+
+	int getWindowWidth() const;
+	int getWindowHeight() const;
+
 	EventManager &getEventManager();
 	Renderer &getRenderer();
 	ResourceManager &getResourceManager();
+	Screen &getCurrentScreen();
 	SDL_Window *get_glWindow();
+
+	static App *create();
+	static App *get();
+	static void destroy();
 };
 
 #endif

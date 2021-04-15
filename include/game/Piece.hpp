@@ -1,6 +1,7 @@
 #ifndef PIECE_H
 #define PIECE_H
 
+#include "graphics/Color.hpp"
 #include "graphics/Drawable.hpp"
 #include "graphics/Texture.hpp"
 #include <array>
@@ -31,7 +32,9 @@ class Piece : public Drawable {
 	/** Height of current shape */
 	int height;
 
-	Texture *tmp;
+	bool ghost;
+
+	Color color;
 
 	/** Calculate current shape width and height */
 	void calculateBounds();
@@ -49,14 +52,17 @@ class Piece : public Drawable {
 	 * 12 13 14 15
 	 * @param shapes
 	 */
-	Piece(std::vector<array<int, 4>> shapes, Texture *t);
+	Piece(std::vector<array<int, 4>> shapes, Color color);
+	Piece(Piece &other);
 
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
 	virtual void resize(int width, int height);
 
 	/** Return current shape */
-	array<array<int, 4>, 4> getCurrentShape();
+	array<array<int, 4>, 4> &getCurrentShape();
+
+	int getRotationId();
 
 	/**
 	 * @brief Rotate this tetromino
@@ -75,8 +81,13 @@ class Piece : public Drawable {
 	/** Set y position */
 	void setY(int y);
 
+	void setGhost(bool ghost);
+
 	/** Set position */
 	void setPosition(int x, int y);
+
+	void setColor(Color color);
+	Color getColor();
 
 	/**
 	 * @return x position in board coordinate

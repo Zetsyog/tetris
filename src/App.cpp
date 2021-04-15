@@ -1,13 +1,18 @@
 #include "App.hpp"
+#include <SDL2/SDL_mixer.h>
 #include <iostream>
 
 namespace {
-const int SCREEN_WIDTH	= 800;
-const int SCREEN_HEIGHT = 800;
+const int SCREEN_WIDTH	= 1450;
+const int SCREEN_HEIGHT = 1000;
 const char *TITLE		= "Tetris";
 } // namespace
 
-App::App() : currentScreen(nullptr), running(true), fps(1.0) {
+App *App::instance = nullptr;
+
+App::App()
+	: currentScreen(nullptr), nextScreen(nullptr), running(true), fps(1.0),
+	  windowWidth(SCREEN_WIDTH), windowHeight(SCREEN_HEIGHT) {
 	initSDL();
 	renderer		= new Renderer(this);
 	resourceManager = new ResourceManager(this);
@@ -26,10 +31,29 @@ void App::quit() {
 void App::initSDL() {
 	int windowFlags;
 	windowFlags = 0;
+	windowFlags |= SDL_WINDOW_SHOWN;
+	windowFlags |= SDL_WINDOW_RESIZABLE;
 
 	if (SDL_Init(SDL_INIT_VIDEO) < 0) {
 		printf("Couldn't initialize SDL: %s\n", SDL_GetError());
 		exit(1);
+	}
+
+	if (TTF_Init() == -1) {
+		printf("TTF_Init: %s\n", TTF_GetError());
+		exit(1);
+	}
+
+	int flags	= MIX_INIT_OGG | MIX_INIT_MOD;
+	int initted = Mix_Init(flags);
+	if (initted & flags != flags) {
+		printf("Mix_Init: Failed to init required ogg and mod support!\n");
+		printf("Mix_Init: %s\n", Mix_GetError());
+		// handle error
+	}
+
+	if (Mix_OpenAudio(22050, MIX_DEFAULT_FORMAT, 2, 4096) == -1) {
+		std::cerr << "Error while initializing SDL" << std::endl;
 	}
 
 	window = SDL_CreateWindow(TITLE, SDL_WINDOWPOS_UNDEFINED,
@@ -42,7 +66,7 @@ void App::initSDL() {
 		exit(1);
 	}
 
-	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "linear");
+	SDL_SetHint(SDL_HINT_RENDER_SCALE_QUALITY, "nearest");
 
 	int imgFlags = IMG_INIT_PNG;
 	if (!(IMG_Init(imgFlags) & imgFlags)) {
@@ -58,22 +82,26 @@ void App::loop() {
 	running = true;
 
 	while (running) {
-		// const Uint8 *state = SDL_GetKeyboardState(NULL);
-		// keyboard(state);
-		// quit |= (state[SDL_SCANCODE_ESCAPE] != 0);
-
 		prev  = now;
 		now	  = SDL_GetPerformanceCounter();
 		delta = (double)((now - prev) / (double)SDL_GetPerformanceFrequency());
 
+		if (nextScreen != nullptr) {
+			if (currentScreen != nullptr) {
+				delete currentScreen;
+			}
+			nextScreen->init(this);
+			currentScreen = nextScreen;
+			nextScreen	  = nullptr;
+		}
+
 		eventManager->update();
 
 		renderer->clear();
-
 		if (currentScreen != nullptr) {
-			currentScreen->render(delta, *renderer);
+			currentScreen->update(delta);
+			currentScreen->render(*renderer);
 		}
-
 		renderer->render();
 
 		fps.update();
@@ -81,12 +109,27 @@ void App::loop() {
 	}
 }
 
-void App::setCurrentScreen(Screen *screen) {
+int App::getWindowWidth() const {
+	return windowWidth;
+}
+
+int App::getWindowHeight() const {
+	return windowHeight;
+}
+
+void App::resize(int width, int height) {
+	windowWidth	 = width;
+	windowHeight = height;
 	if (currentScreen != nullptr) {
-		delete currentScreen;
+		currentScreen->resize(width, height);
 	}
-	screen->init(this);
-	currentScreen = screen;
+}
+
+void App::setCurrentScreen(Screen *screen) {
+	if (nextScreen != nullptr) {
+		delete nextScreen;
+	}
+	nextScreen = screen;
 }
 
 EventManager &App::getEventManager() {
@@ -98,9 +141,16 @@ SDL_Window *App::get_glWindow() {
 }
 
 App::~App() {
-	delete renderer;
+	delete eventManager;
+	if (currentScreen != nullptr) {
+		delete currentScreen;
+	}
 	delete resourceManager;
+	delete renderer;
 	SDL_DestroyWindow(window);
+	TTF_Quit();
+	IMG_Quit();
+	Mix_CloseAudio();
 	SDL_Quit();
 }
 
@@ -110,4 +160,21 @@ Renderer &App::getRenderer() {
 
 ResourceManager &App::getResourceManager() {
 	return *resourceManager;
+}
+
+Screen &App::getCurrentScreen() {
+	return *currentScreen;
+}
+
+App *App::create() {
+	instance = new App();
+	return instance;
+}
+
+App *App::get() {
+	return instance;
+}
+
+void App::destroy() {
+	delete instance;
 }
