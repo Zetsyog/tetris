@@ -1,5 +1,5 @@
 # Works with 3.11 and tested through 3.19
-cmake_minimum_required(VERSION 3.11...3.19)
+cmake_minimum_required(VERSION 3.10...3.19)
 
 # Project name and a few useful settings. Other commands can pick up the results
 project(
@@ -33,6 +33,7 @@ set (SOURCES src/main.cpp
           src/graphics/Color.cpp
           src/graphics/FontGlyph.cpp
           src/resources/ResourceManager.cpp
+          src/resources/Music.cpp
           )
 
 file(COPY assets DESTINATION ${CMAKE_BINARY_DIR})

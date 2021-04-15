@@ -107,6 +107,9 @@ class Game : public Gui {
 	/** Set tetromino droping	 */
 	void setSoftDrop(bool active);
 
+	/** Get tetromino falling speed	 */
+	double getSpeed() const;
+
 	/**
 	 * Check if the given piece is at a valid location
 	 * @param piece

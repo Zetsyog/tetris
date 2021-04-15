@@ -10,7 +10,6 @@ void GameScreen::init(App *app) {
 	add(game->center());
 	game->start();
 }
-
 GameScreen::~GameScreen() {
 }
 

@@ -6,7 +6,7 @@
 #include <vector>
 
 #define COLOR_FIRST_ID 1
-#define COLOR_LAST_ID
+#define COLOR_LAST_ID 9
 
 #define COLOR_BLUE 1
 #define COLOR_CYAN 2
