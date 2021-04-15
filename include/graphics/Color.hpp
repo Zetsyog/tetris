@@ -6,7 +6,7 @@
 #include <vector>
 
 #define COLOR_FIRST_ID 1
-#define COLOR_LAST_ID 8
+#define COLOR_LAST_ID
 
 #define COLOR_BLUE 1
 #define COLOR_CYAN 2
@@ -16,6 +16,7 @@
 #define COLOR_RED 6
 #define COLOR_YELLOW 7
 #define COLOR_GHOST 8
+#define COLOR_GRAY 9
 
 class Color {
   private:

@@ -39,6 +39,7 @@ void ResourceManager::registerTextures() {
 		new Texture(r, "assets/texture/block/yellow.png"));
 	add("texture:block:ghost",
 		new Texture(r, "assets/texture/block/ghost.png"));
+	add("texture:block:gray", new Texture(r, "assets/texture/block/ghost.png"));
 
 	Color::init(*this);
 }

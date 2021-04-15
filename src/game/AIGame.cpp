@@ -1,13 +1,11 @@
 #include "game/AIGame.hpp"
 
 AIGame::AIGame(App &app)
-	: Game::Game(app), targetX(0), botSpeed(0.1), actionTimer(0) {
+	: Game::Game(app), targetX(0), botSpeed(0.4), actionTimer(0) {
 }
 
 void AIGame::genNextPiece() {
 	Game::genNextPiece();
-	cout << "(" << currentPiece->getWidth() << ";" << currentPiece->getHeight()
-		 << ")" << endl;
 	Piece *target  = new Piece(*currentPiece);
 	targetX		   = 0;
 	int targetY	   = 0;
@@ -77,9 +75,6 @@ void AIGame::genNextPiece() {
 	}
 	setSoftDrop(false);
 	delete target;
-	cout << "new target (Y) : " << targetX << "(" << maxY << ":" << emptyScore
-		 << ")" << endl;
-	cout << "------------------" << endl;
 }
 
 int AIGame::countEmptyBlocksUnder(

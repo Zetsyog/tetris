@@ -15,7 +15,11 @@ void MainMenuScreen::init(App *app) {
 			->centerX());
 
 	add((new Button(0, "Play", 300, 100))->setListener(this)->center());
-	add((new Button(1, "Quit", 300, 100))
+	add((new Button(1, "Versus IA", 300, 100))
+			->setListener(this)
+			->center()
+			->offsetY(150));
+	add((new Button(2, "Quit", 300, 100))
 			->setListener(this)
 			->center()
 			->offsetY(300));
@@ -35,6 +39,9 @@ void MainMenuScreen::onClick(int buttonId) {
 		app->setCurrentScreen(new GameScreen());
 		break;
 	case 1:
+		app->setCurrentScreen(new VersusGameScreen());
+		break;
+	case 2:
 		app->quit();
 
 	default:

@@ -46,6 +46,8 @@ class Game : public Gui {
 
 	bool finished;
 
+	int lineFilled;
+
 	Texture *background, *grid, *panel, *title;
 
 	FontGlyph *nextPieceGlyph, *scoreGlyph, *levelGlyph;
@@ -112,6 +114,10 @@ class Game : public Gui {
 	bool isDone();
 
 	int getScore();
+
+	int getLineFilled();
+
+	void addLine();
 
 	/**
 	 * @return board width in pixels

@@ -7,7 +7,7 @@ Game::Game(App &app)
 	: pieceAvailable(), board(), score(0), timePerBlock(DEFAULT_SPEED),
 	  movementTimer(0), running(false), currentPiece(nullptr), app(app),
 	  nextPiece(nullptr), level(1), scoreGoal(500), finished(false),
-	  ghost(nullptr) {
+	  ghost(nullptr), lineFilled(0) {
 	std::srand(std::time(nullptr));
 	// I piece
 	pieceAvailable.push_back(
@@ -66,6 +66,10 @@ void Game::resume() {
 
 void Game::update(double delta) {
 	if (running && !finished) {
+		if (lineFilled) {
+			lineFilled = 0;
+		}
+
 		movementTimer += delta;
 
 		if (movementTimer >= timePerBlock) {
@@ -154,7 +158,7 @@ void Game::checkLine() {
 			lineCleared++;
 		}
 	}
-
+	this->lineFilled = lineCleared;
 	updateScore(lineCleared);
 }
 
@@ -360,6 +364,26 @@ bool Game::isDone() {
 
 int Game::getScore() {
 	return score;
+}
+
+int Game::getLineFilled() {
+	return lineFilled;
+}
+
+void Game::addLine() {
+	for (int j = 0; j < BOARD_HEIGHT - 1; j++) {
+		for (int i = 0; i < BOARD_WIDTH; i++) {
+			board[i][j] = board[i][j + 1];
+		}
+	}
+
+	int r = std::rand() / ((RAND_MAX + 1u) / BOARD_WIDTH);
+	for (int i = 0; i < BOARD_WIDTH; i++) {
+		if (i != r)
+			board[i][BOARD_HEIGHT - 1] = COLOR_GRAY;
+		else
+			board[i][BOARD_HEIGHT - 1] = 0;
+	}
 }
 
 Game::~Game() {

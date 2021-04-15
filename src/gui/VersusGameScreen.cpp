@@ -10,8 +10,8 @@ void VersusGameScreen::init(App *app) {
 	aiGame = new AIGame(*app);
 	game->start();
 	aiGame->start();
-	add(game->center()->offsetX(-400));
-	add(aiGame->center()->offsetX(400));
+	add(game->center()->offsetX(-360));
+	add(aiGame->center()->offsetX(360));
 }
 
 VersusGameScreen::~VersusGameScreen() {
@@ -32,6 +32,13 @@ void VersusGameScreen::update(double delta) {
 	} else if (!state[SDL_SCANCODE_DOWN] && down) {
 		game->setSoftDrop(false);
 		down = false;
+	}
+
+	for (int i = 0; i < game->getLineFilled(); i++) {
+		aiGame->addLine();
+	}
+	for (int i = 0; i < aiGame->getLineFilled(); i++) {
+		game->addLine();
 	}
 	Screen::update(delta);
 
