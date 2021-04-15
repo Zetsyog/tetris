@@ -8,11 +8,14 @@ Music::Music(std::string path) : path(path) {
 }
 
 int Music::play() {
-	return Mix_PlayMusic(music, -1);
+	int ret = Mix_PlayMusic(music, -1);
+	Mix_ResumeMusic();
+	return ret;
 }
 
 void Music::stop() {
 	Mix_PauseMusic();
+	Mix_RewindMusic();
 }
 
 Music::~Music() {
