@@ -1,7 +1,9 @@
 #include "game/AIGame.hpp"
 
+#define DEFAULT_SPEED 0.4
+
 AIGame::AIGame(App &app)
-	: Game::Game(app), targetX(0), botSpeed(0.4), actionTimer(0) {
+	: Game::Game(app), targetX(0), botSpeed(DEFAULT_SPEED), actionTimer(0) {
 }
 
 void AIGame::updateTarget() {
@@ -64,11 +66,13 @@ void AIGame::updateTarget() {
 					}
 				}
 			} else if (tmpScore < targetScore) {
-				if (completedLines > 2) {
+				if (completedLines > targetCompletedLines) {
 					updateTarget = true;
 				} else if (getMaxY(*target) > maxY) {
 					updateTarget = true;
 				}
+			} else if (tmpScore > targetScore && completedLines >= 2) {
+				updateTarget = true;
 			}
 
 			if (updateTarget) {
