@@ -20,6 +20,8 @@ class AIGame : public Game {
 	AIGame(App &app);
 	virtual void update(double delta);
 	virtual void render(Renderer &renderer);
+
+	virtual void addLine();
 };
 
 #endif

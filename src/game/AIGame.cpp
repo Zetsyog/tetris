@@ -165,3 +165,8 @@ void AIGame::genNextPiece() {
 void AIGame::render(Renderer &renderer) {
 	Game::render(renderer);
 }
+
+void AIGame::addLine() {
+	Game::addLine();
+	updateTarget();
+}

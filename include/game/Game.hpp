@@ -123,7 +123,7 @@ class Game : public Gui {
 
 	int getLineFilled();
 
-	void addLine();
+	virtual void addLine();
 
 	/**
 	 * @return board width in pixels
