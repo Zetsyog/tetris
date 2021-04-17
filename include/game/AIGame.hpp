@@ -14,6 +14,8 @@ class AIGame : public Game {
 		Piece &piece,
 		std::array<std::array<int, BOARD_HEIGHT>, BOARD_WIDTH> &board);
 
+	void updateTarget();
+
   public:
 	AIGame(App &app);
 	virtual void update(double delta);

@@ -4,22 +4,28 @@ AIGame::AIGame(App &app)
 	: Game::Game(app), targetX(0), botSpeed(0.4), actionTimer(0) {
 }
 
-void AIGame::genNextPiece() {
-	Game::genNextPiece();
-	Piece *target  = new Piece(*currentPiece);
-	targetX		   = 0;
-	int targetY	   = 0;
-	int maxY	   = 0;
-	targetRotation = 0;
-	int emptyScore = 500;
+void AIGame::updateTarget() {
+	Piece *target	  = new Piece(*currentPiece);
+	targetX			  = 0;
+	int targetY		  = 0;
+	int maxY		  = 0;
+	targetRotation	  = 0;
+	int targetScore	  = 500;
+	bool updateTarget = false;
 
-	int bestLineCompleted = 0;
+	int targetCompletedLines = 0;
 	// for each rotation
 	for (int i = 0; i < 4; i++) {
 		// for each x
 		for (int x = -2; x < BOARD_WIDTH - target->getWidth() + 1; x++) {
+			updateTarget = false;
+
 			target->setY(0);
 			target->setX(x);
+
+			if (!isValid(*target)) {
+				continue;
+			}
 			// We move target down to the max valid position
 			while (isValid(*target)) {
 				target->setY(target->getY() + 1);
@@ -45,29 +51,33 @@ void AIGame::genNextPiece() {
 					completedLines++;
 				}
 			}
+
 			int tmpScore = countEmptyBlocksUnder(*target, tmpBoard);
 
-			if (completedLines > bestLineCompleted) {
-				bestLineCompleted = completedLines;
-				targetRotation	  = target->getRotationId();
-				targetX			  = target->getX();
-				targetY			  = target->getY();
-				maxY			  = getMaxY(*target);
-				emptyScore		  = tmpScore;
-			} else if (completedLines == bestLineCompleted) {
-				if (tmpScore < emptyScore) {
-					targetRotation = target->getRotationId();
-					targetX		   = target->getX();
-					targetY		   = target->getY();
-					maxY		   = getMaxY(*target);
-					emptyScore	   = tmpScore;
-				} else if (getMaxY(*target) > maxY) {
-					targetRotation = target->getRotationId();
-					targetX		   = target->getX();
-					targetY		   = target->getY();
-					maxY		   = getMaxY(*target);
-					emptyScore	   = tmpScore;
+			if (tmpScore == 0) {
+				if (completedLines > targetCompletedLines) {
+					updateTarget = true;
+				} else if (targetCompletedLines <= 2 ||
+						   completedLines == targetCompletedLines) {
+					if (getMaxY(*target) > maxY) {
+						updateTarget = true;
+					}
 				}
+			} else if (tmpScore < targetScore) {
+				if (completedLines > 2) {
+					updateTarget = true;
+				} else if (getMaxY(*target) > maxY) {
+					updateTarget = true;
+				}
+			}
+
+			if (updateTarget) {
+				targetCompletedLines = completedLines;
+				targetRotation		 = target->getRotationId();
+				targetX				 = target->getX();
+				targetY				 = target->getY();
+				maxY				 = getMaxY(*target);
+				targetScore			 = tmpScore;
 			}
 		}
 
@@ -93,13 +103,15 @@ int AIGame::countEmptyBlocksUnder(
 					while (j < 4 && shape[x][j] != 0)
 						j++;
 
-					for (int i = j + piece.getY(); i < BOARD_HEIGHT; i++) {
-						if (board[piece.getX() + x][i] == 0) {
-							count++;
-						} else {
-							break;
-						}
+					int i = j + piece.getY();
+
+					// count every empty block
+					while (i < BOARD_HEIGHT &&
+						   board[piece.getX() + x][i] == 0) {
+						i++;
+						count++;
 					}
+
 					xDone[x] = true;
 				}
 			}
@@ -143,6 +155,11 @@ void AIGame::update(double delta) {
 			}
 		}
 	}
+}
+
+void AIGame::genNextPiece() {
+	Game::genNextPiece();
+	updateTarget();
 }
 
 void AIGame::render(Renderer &renderer) {

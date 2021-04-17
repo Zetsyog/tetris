@@ -41,7 +41,7 @@ Game::Game(App &app)
 		new Piece({{0, 1, 5, 6}, {2, 5, 6, 9}, {4, 5, 9, 10}, {1, 4, 5, 8}},
 				  Color::get(COLOR_RED)));
 
-	unsigned seed = std::chrono::system_clock::now().time_since_epoch().count();
+	seed = std::chrono::system_clock::now().time_since_epoch().count();
 
 	grid	   = app.getResourceManager().get("texture:grid");
 	background = app.getResourceManager().get("texture:ui:panel:2");
